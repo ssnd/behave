@@ -1,12 +1,27 @@
+# TODO:
+# kps analysis
+# interaction functions
+
+import json
+
 class Behave():
 
 	def __init__(self, data):
+
+
+		# if the data passed in is text, convert it to json
+		if (type(data) == str):
+
+			data = json.loads(data)
 
 		self.timestamps = [keypress['timestamp'] for keypress in data]
 
 		self.durations = [keypress['key_duration'] for keypress in data]
 
 		self.keycodes = [keypress['keycode'] for keypress in data]
+
+
+
 
 
 	def keypress_delay_deltas(self):
