@@ -30,7 +30,18 @@ class Behave():
 
 		return delays
 
-
+	def keypress_per_second(self):
+		"""
+		/ tm = timestamps
+		Returns decimal count of keypress per second (KPS).
+		Takes an array of timestamps as an argument.
+		"""
+		tm_all_time_ms = self.timestamps[-1] - self.timestamps[0]
+		tm_all_time_s = tm_all_time_ms / 100
+		tm_key_count = len(self.timestamps)
+		tm_key_per_sec = tm_key_count / tm_all_time_s
+		return tm_key_per_sec
+	
 	def keypress_delay_average(self):
 		"""
 		/ tm = timestamps
