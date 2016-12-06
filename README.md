@@ -5,9 +5,9 @@ A simple library meant to identify human beings using the way they interact with
 The description will be updated soon.
 
 
-** Importing behave library **
+**Importing behave library**
 
 `from behave.lib import Behave`
 
 
-*made by ssnd and igorexz*
+*made by @ssnd and @igorexz*
