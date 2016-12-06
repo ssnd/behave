@@ -10,13 +10,13 @@
 from flask import Flask, request
 import os
 import sys
-
+from flask_cors import CORS, cross_origin
 
 FILES_PATH = "../data/user_typing_info"
 
 
 app = Flask(__name__)
-
+CORS(app)
 
 
 def encode_dict(d, codec='utf8'):
