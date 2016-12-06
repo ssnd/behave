@@ -4,6 +4,20 @@
 
 import json
 
+class Behave_Utils():
+
+	def __init__(self):
+		pass
+
+	def read_from_file(self, path):
+
+		f = open(path, "r")
+		
+		file_contents = f.read()
+
+		return file_contents
+
+
 class Behave():
 
 	def __init__(self, data):
@@ -19,9 +33,6 @@ class Behave():
 		self.durations = [keypress['key_duration'] for keypress in data]
 
 		self.keycodes = [keypress['keycode'] for keypress in data]
-
-
-
 
 
 	def keypress_delay_deltas(self):
