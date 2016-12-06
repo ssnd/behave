@@ -2,7 +2,7 @@
 # kps analysis
 # interaction functions
 
-import json
+import ast
 
 class Behave_Utils():
 
@@ -26,7 +26,7 @@ class Behave():
 		# if the data passed in is text, convert it to json
 		if (type(data) == str):
 
-			data = json.loads(data)
+			data = ast.literal_eval(data)
 
 		self.timestamps = [keypress['timestamp'] for keypress in data]
 
