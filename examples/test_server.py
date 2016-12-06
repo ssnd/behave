@@ -2,7 +2,7 @@
 #
 #
 # IMPORTANT:
-# required argument when starting the script is the path where the files should be saved 
+# a required argument when starting the script is the path where the files should be saved 
 #
 #
 #
@@ -46,8 +46,6 @@ def encode_dict(d, codec='utf8'):
 
 @app.route("/", methods=["POST"])
 def home():
-
-	print FILES_PATH
 
 	files = os.listdir(FILES_PATH)
 
