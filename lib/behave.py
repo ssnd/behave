@@ -1,13 +1,44 @@
 # TODO:
-# kps analysis
 # interaction functions
 
 import ast
 
-class Behave_Utils():
 
-	def __init__(self):
-		pass
+class Behave():
+
+	def __init__(self, *args, **kwargs):
+		self.PATH = "data/user_typing_info/"
+
+		if (kwargs.get("path")):
+
+			self.PATH = kwargs.get("path")
+
+
+		if (kwargs.get("file")):
+
+			file_name = str(kwargs.get("file"))
+
+			self.data = self.read_from_file(PATH+file_name)
+
+
+		if (kwargs.get("data")):
+
+			self.data = kwargs.get("data")
+
+
+		# if the data passed in is text, convert it to json
+		if (type(self.data) == str):
+
+			self.data = ast.literal_eval(data)
+
+
+		self.timestamps = [keypress['timestamp'] for keypress in self.data]
+
+		self.durations = [keypress['key_duration'] for keypress in self.data if keypress['key_duration'] > 20 and keypress['key_duration'] < 140]
+
+		self.keycodes = [keypress['keycode'] for keypress in self.data]
+
+
 
 	def read_from_file(self, path):
 
@@ -18,28 +49,13 @@ class Behave_Utils():
 		return file_contents
 
 
-class Behave():
-
-	def __init__(self, data):
-
-
-		# if the data passed in is text, convert it to json
-		if (type(data) == str):
-
-			data = ast.literal_eval(data)
-
-		self.timestamps = [keypress['timestamp'] for keypress in data]
-
-		self.durations = [keypress['key_duration'] for keypress in data]
-
-		self.keycodes = [keypress['keycode'] for keypress in data]
-
 
 	def keypress_delay_deltas(self):
 
 		delays = [self.timestamps[i+1] - self.timestamps[i] for i in range(len(self.timestamps) - 1)]
 
 		return delays
+
 
 	def keypress_per_second(self):
 		"""
@@ -49,13 +65,14 @@ class Behave():
 		"""
 		tm_all_time_ms = self.timestamps[-1] - self.timestamps[0]
 
-		tm_all_time_s = tm_all_time_ms / 100
+		tm_all_time_s = tm_all_time_ms / 100.0
 
 		tm_key_count = len(self.timestamps)
 
 		tm_key_per_sec = tm_key_count / tm_all_time_s
 		
 		return tm_key_per_sec
+
 	
 	def keypress_delay_average(self):
 		"""
@@ -80,6 +97,11 @@ class Behave():
 		return self.keycodes.count(8)
 
 
+	def keypress_durations(self):
+		
+		return self.durations
+
+
 	def keypress_duration_average(self):
 		"""
 		/ key_d = key_duration
@@ -88,6 +110,16 @@ class Behave():
 		"""
 		return sum(self.durations) / len(self.durations)
 
+	def space_delays(self):
+
+		tm_length = len(self.timestamps)
+
+		space_timestamps = [self.timestamps[i] for i in range(tm_length) if self.keycodes[i] == 32]
+
+		space_delays = [space_timestamps[i+1] - space_timestamps[i-1] for i in range(len(space_timestamps) - 1)]
+
+		return space_delays
+
 
 	def space_delay_average(self):
 		"""
@@ -95,11 +127,7 @@ class Behave():
 		Returns average of Space keypress delays.
 		Takes an array of timestamps and an array of keycodes as an argument.
 		"""
-		tm_length = len(self.timestamps)
-
-		space_timestamps = [self.timestamps[i] for i in range(tm_length) if self.keycodes[i] == 32]
-
-		space_delays = [space_timestamps[i+1] - space_timestamps[i-1] for i in range(len(space_timestamps) - 1)]
+		space_delays = self.space_delays()
 
 		space_tm_average = sum(space_delays) / len(space_delays)
 
