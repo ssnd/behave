@@ -33,7 +33,7 @@ class Behave_Visualization:
 
 		contents = file.read()
 
-		instance = Behave(contents)
+		instance = Behave(data=contents)
 
 		return instance
 
