@@ -6,19 +6,20 @@ import ast
 
 class Behave():
 
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args, **kwargs):		
 		self.PATH = "data/user_typing_info/"
-
+		self.data = []
 		if (kwargs.get("path")):
 
 			self.PATH = kwargs.get("path")
+			self.data = self.read_from_file(self.PATH)
 
 
 		if (kwargs.get("file")):
 
 			file_name = str(kwargs.get("file"))
 
-			self.data = self.read_from_file(PATH+file_name)
+			self.data = self.read_from_file(self.PATH+file_name)
 
 
 		if (kwargs.get("data")):
@@ -29,12 +30,12 @@ class Behave():
 		# if the data passed in is text, convert it to json
 		if (type(self.data) == str):
 
-			self.data = ast.literal_eval(data)
+			self.data = ast.literal_eval(self.data)
 
 
 		self.timestamps = [keypress['timestamp'] for keypress in self.data]
 
-		self.durations = [keypress['key_duration'] for keypress in self.data if keypress['key_duration'] > 20 and keypress['key_duration'] < 140]
+		self.durations = [keypress['key_duration'] for keypress in self.data]
 
 		self.keycodes = [keypress['keycode'] for keypress in self.data]
 
@@ -89,14 +90,6 @@ class Behave():
 		return tm_average
 
 
-	def backspace_count(self):
-		"""
-		Returns Backspace keypress count.
-		Takes array of keycodes as an argument.
-		"""
-		return self.keycodes.count(8)
-
-
 	def keypress_durations(self):
 		
 		return self.durations
@@ -132,8 +125,33 @@ class Behave():
 		space_tm_average = sum(space_delays) / len(space_delays)
 
 		return space_tm_average
+	def average_difference(self, subject):
+		"""
+		/ subject = other test with comparision data.
+		Returns differences between subject and object tests.
+		"""
+		kps_diff = abs(self.keypress_per_second() - subject.keypress_per_second())
+		kdel_diff = abs(self.keypress_delay_average() - subject.keypress_delay_average())
+		kdur_diff = abs(self.keypress_duration_average() - subject.keypress_duration_average())
+		return {"kps_diff": kps_diff, "kdel_diff": kdel_diff, "kdur_diff": kdur_diff}
+	def compare_difference(self, subject):
+		"""
+		/ subject = other test with comparision data.
+		Returns True for the same user and False for different users.
+		"""
 
-
+		# maximum differences for the same user
+		max_kps_diff = 0.06
+		max_kdel_diff = 10
+		max_kdur_diff = 10		
+	
+		difference = self.average_difference(subject)
+		kps_diff = difference["kps_diff"]
+		kdel_diff = difference["kdel_diff"]
+		kdur_diff = difference["kdur_diff"]
+		
+		return kps_diff < max_kps_diff and kdel_diff < max_kdel_diff and kdur_diff < max_kdur_diff
+				
 
 
 if __name__ == "__main__":
