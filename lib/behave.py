@@ -2,6 +2,7 @@
 # interaction functions
 
 import ast
+import os
 
 
 class Behave():
@@ -9,6 +10,10 @@ class Behave():
 	def __init__(self, *args, **kwargs):
 
 		self.PATH = "data/user_typing_info/"
+
+		path, dirs, files = os.walk(self.PATH).next()
+
+		self.number_of_tests = len(files)
 
 		self.data = []
 
@@ -110,31 +115,6 @@ class Behave():
 		return sum(self.durations) / len(self.durations)
 
 
-	def space_delays(self):
-
-		tm_length = len(self.timestamps)
-
-		space_timestamps = [self.timestamps[i] for i in range(tm_length) if self.keycodes[i] == 32]
-
-		space_delays = [space_timestamps[i+1] - space_timestamps[i-1] for i in range(len(space_timestamps) - 1)]
-
-		return space_delays
-
-
-	def space_delay_average(self):
-		"""
-		/ tm = timestamps
-		Returns average of Space keypress delays.
-		Takes an array of timestamps and an array of keycodes as an argument.
-		"""
-		space_delays = self.space_delays()
-
-		space_tm_average = sum(space_delays) / len(space_delays)
-
-		return space_tm_average
-
-
-
 	def average_difference(self, subject):
 		"""
 		/ subject = other test with comparision data.
@@ -192,4 +172,63 @@ class Behave():
 
 		
 		return kps_diff < max_kps_diff and kdel_diff < max_kdel_diff and kdur_diff < max_kdur_diff
-				
+
+
+	def normalize_data(self):
+
+		"""
+		normalize data and prepare it for use in neural network
+		"""
+
+		number_of_tests = 4
+
+		params_arr = []
+
+		for i in range(1,number_of_tests+1):
+
+			instance = Behave(path=path+str(i))
+
+			params_arr.append(instance.get_all_params())
+
+
+		data = []
+
+		for instance in params_arr:
+
+			params_arr = [instance[key]*1.0 for key in sorted(instance)]
+
+			data.append(params_arr)
+
+
+		avg_data_arr = [] 
+
+		for i in range(len(instance)):
+
+			param_data = zip(*data)[i]
+
+			maxv = max(param_data)
+
+			minv = min(param_data)
+
+			avg_data = [(val-minv)/(maxv-minv) for val in param_data]
+
+			avg_data_arr.append(avg_data)
+
+		user_data = []
+
+		resp = []
+
+
+		for i in range(number_of_tests):
+
+			if i<2:
+
+				resp.append((0,1))
+
+			else:
+
+				resp.append((1,0))
+
+
+
+			user_data.append(zip(*avg_data_arr)[i])
