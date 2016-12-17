@@ -9,21 +9,19 @@ class Behave():
 
 	def __init__(self, *args, **kwargs):
 
-		self.PATH = "data/user_typing_info/"
-
-		path, dirs, files = os.walk(self.PATH).next()
-
-		self.number_of_tests = len(files)
-
-		self.data = []
-
+		self.PATH = "../data/user_typing_info/"
 
 		if (kwargs.get("path")):
 
 			self.PATH = kwargs.get("path")
 
-			self.data = self.read_from_file(self.PATH)
 
+
+
+		self.data = []
+
+
+		path, dirs, files = os.walk(self.PATH).next()
 
 		if (kwargs.get("file")):
 
@@ -31,6 +29,7 @@ class Behave():
 
 			self.data = self.read_from_file(self.PATH+file_name)
 
+		self.number_of_tests = len(files)
 
 
 		if (kwargs.get("data")):
@@ -159,7 +158,7 @@ class Behave():
 
 		max_kdel_diff = 10
 
-		max_kdur_diff = 10		
+		max_kdur_diff = 10
 	
 
 		difference = self.average_difference(subject)
@@ -174,61 +173,89 @@ class Behave():
 		return kps_diff < max_kps_diff and kdel_diff < max_kdel_diff and kdur_diff < max_kdur_diff
 
 
-	def normalize_data(self):
+	def normalize_data(self, min_max_values):
+
+		user_data = self.get_all_params()
+
+		user_data_values = user_data.values()
+
+		normalized_data = []
+
+		for key in range(len(user_data_values)):
+
+			minv = min_max_values[key][0]
+			maxv = min_max_values[key][1]
+
+			value = user_data_values[key]
+
+			calc_val = (value-minv)/(maxv-minv)
+
+			normalized_data.append(calc_val)
+
+		return tuple(normalized_data)
+
+	def normalize_test_data(self):
 
 		"""
 		normalize data and prepare it for use in neural network
 		"""
 
-		number_of_tests = 4
-
 		params_arr = []
 
-		for i in range(1,number_of_tests+1):
+		for i in range(1, self.number_of_tests+1):
 
-			instance = Behave(path=path+str(i))
+			instance = Behave(file=i, path=self.PATH)
 
-			params_arr.append(instance.get_all_params())
+			params_dict = instance.get_all_params()
 
-
-		data = []
-
-		for instance in params_arr:
-
-			params_arr = [instance[key]*1.0 for key in sorted(instance)]
-
-			data.append(params_arr)
+			params_arr.append([params_dict[key]*1.0 for key in params_dict])
 
 
-		avg_data_arr = [] 
+		min_max_values = []
+		avg_data_arr = []
 
-		for i in range(len(instance)):
 
-			param_data = zip(*data)[i]
+		for i in range(len(params_dict)):
+			param_data = zip(*params_arr)[i]
 
 			maxv = max(param_data)
-
 			minv = min(param_data)
+
+			min_max = (minv, maxv)
+
+			min_max_values.append(min_max)
 
 			avg_data = [(val-minv)/(maxv-minv) for val in param_data]
 
 			avg_data_arr.append(avg_data)
 
-		user_data = []
+
+		data = [zip(*avg_data_arr)[i] for i in range(self.number_of_tests)]
 
 		resp = []
 
-
-		for i in range(number_of_tests):
-
-			if i<2:
-
-				resp.append((0,1))
-
+		# todo: fix this shit
+		for i in range(self.number_of_tests):
+			if i < 2:
+				resp.append((1,))
 			else:
+				resp.append((0,))
 
-				resp.append((1,0))
+		user_data = {
+			"data" : data,
+			"responses" : resp,
+			"min_max" : min_max_values
+		}
+
+		return user_data
 
 
 
-			user_data.append(zip(*avg_data_arr)[i])
+if __name__ == "__main__":
+
+	behave_instance = Behave()
+
+	data = behave_instance.normalize_test_data()
+	print type(data)
+
+
