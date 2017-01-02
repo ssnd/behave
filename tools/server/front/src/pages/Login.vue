@@ -24,6 +24,9 @@ todo: finish implementing the form validation feature
 </template>
 
 <script> 
+import auth from "../auth";
+
+
 
 export default {
 	data() {
@@ -44,7 +47,8 @@ export default {
 				})
 				.then(
 					(response) => {
-						console.log(response);
+						auth.set_auth(response.data.token)
+						console.log(auth.get_auth());
 					}, 
 					(response) => {
 						console.log("POST FAILED.");

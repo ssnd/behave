@@ -227,6 +227,7 @@ class Behave():
 
 
 		for i in range(len(params_dict)):
+
 			param_data = zip(*params_arr)[i]
 
 			maxv = max(param_data)

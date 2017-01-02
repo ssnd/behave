@@ -1,5 +1,10 @@
 from server import db
 import json
+import ast
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
+from server import app
+
 
 class User(db.Model):
 	__tablename__ = 'users'
@@ -29,6 +34,22 @@ class User(db.Model):
 	def __repr__(self):
 		return '<User %r>' % (self.username)
 
+	def generate_auth_token(self):
+		s = Serializer(app.config['SECRET_KEY'])
+		return s.dumps({'id' : self.id})
+
+	@staticmethod
+	def verify_auth_token(token):
+		s = Serializer(app.config['SECRET_KEY'])
+		try:
+			data = s.loads(token)
+		except SignatureExpired:
+			return None
+		except BadSignature:
+			return None
+		user = User.query.get(data['id'])
+		return user
+
 class DataChunk(db.Model):
 	__tablename__ = "datachunks"
 	id = db.Column(db.Integer, primary_key=True)
@@ -40,5 +61,5 @@ class DataChunk(db.Model):
 		self.data = data
 
 	def get_json_data(self):
-		return json.loads(self.data)
+		return ast.literal_eval(self.data)
 
