@@ -60,8 +60,26 @@ a:hover{
 	border: none;
 	outline: none;
 }
-#register{
-	margin: 5px;
+.form-container{
+	margin: 5px auto;
+	text-align: center;
+}
+.logout{
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	color: #D32F2F;
+	padding: 6px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	font-family: Open Sans;
+	background: #fff;
+	border: none;
+	border-radius: 2px;
+	transition: 0.25s;
+}
+.logout:hover{
+	cursor: pointer;
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 input{
 	border: none;
@@ -72,7 +90,7 @@ input{
 	font-family: Open Sans;
 }
 #bh-submit, .submit{
-	padding: 15px;
+	padding: 10px;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	font-family: Open Sans;
 	font-weight: 900;
@@ -80,6 +98,11 @@ input{
 	border: none;
 	border-radius: 2px;
 	transition: 0.25s;
+}
+.form-error{
+	font-size: 15px;
+	padding: 10px;
+	color: red;
 }
 #bh-submit:hover, .submit:hover{
 	cursor: pointer;

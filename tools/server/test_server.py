@@ -23,7 +23,7 @@ send_data = signal("send-data")
 
 
 @send_data.connect
-@app.before_first_request
+# @app.before_first_request
 def init_neural_net( *args ):
 
 	global net;
@@ -89,7 +89,6 @@ def init_neural_net( *args ):
 
 
 
-
 @login_manager.user_loader
 def load_user(id):
 
@@ -143,7 +142,7 @@ def login():
 	registered_user = User.query.filter_by(username=username, password=pass_hash).first()
 
 	if registered_user is None:
-		return json.dumps({
+		return jsonify({
 			"response" : "error",
 			"error" : "Check the username or password",
 			"token" : "",
@@ -165,7 +164,7 @@ def logout():
 
 	logout_user()
 
-	return redirect("/login")
+	return "ok"
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -189,7 +188,7 @@ def register():
 	db.session.add(u)
 	db.session.commit()
 
-	return redirect("/login")
+	return "OK"
 
 
 @app.route("/train", methods=["GET", "POST"])
