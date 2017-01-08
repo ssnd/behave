@@ -1,6 +1,6 @@
 from flask import request, render_template, redirect, jsonify
 from server import db, app, login_manager
-from models import User, DataChunk
+from models import User, DataChunk, Collect
 from flask_login import login_user, logout_user, current_user, login_required
 import hashlib
 import os, sys
@@ -152,7 +152,7 @@ def login():
 	login_user(registered_user, remember=True)
 
 	return jsonify({
-		"response" : "ok",
+		"status" : "ok",
 		"token" : registered_user.generate_auth_token(),
 		"user_id" : registered_user.id,
 		"error" : "",
@@ -164,7 +164,9 @@ def logout():
 
 	logout_user()
 
-	return "ok"
+	return jsonify({
+		"status" : "ok"
+	})
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -188,8 +190,22 @@ def register():
 	db.session.add(u)
 	db.session.commit()
 
-	return "OK"
+	return jsonify({
+		"status" : "ok"
+	})
 
+
+@app.route("/collect", methods=["GET", "POST"])
+def collect():
+
+	c = Collect(str(request.json))
+
+	db.session.add(c)
+	db.session.commit()
+
+	return jsonify({
+		"status" : "ok"
+	})
 
 @app.route("/train", methods=["GET", "POST"])
 @login_required

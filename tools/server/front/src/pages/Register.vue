@@ -5,7 +5,7 @@ todo: form validation
 <template>
 	<div class="register">
 		<div class="form-container">
-		<p v-on:click="submitForm">Register page</p>
+		<p>Register page</p>
 
 		<form v-on:submit="submitForm">
 			<p :class="{ 'control': true }">

@@ -5,7 +5,7 @@ todo: finish implementing the form validation feature
 <template>
 	<div class="login">
 		<div class="form-container">
-		<p v-on:click="submitForm">Login page</p>
+		<p>Login page</p>
 
 		<form v-on:submit="submitForm">
 			<p :class="{ 'control': true }">
@@ -47,7 +47,7 @@ export default {
 				})
 				.then(
 					(response) => {
-						if(response.data.response == "ok"){
+						if(response.data.status == "ok"){
 							auth.set_auth(response.data.token, this.formData.username)
 							this.loginError = false;
 							window.location.href = "/";

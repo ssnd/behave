@@ -28,7 +28,7 @@
       logout(){
         this.$http.post('http://127.0.0.1:5000/logout').then(
           (response) => {
-            if(response.data == "ok"){
+            if(response.data.status == "ok"){
               auth.set_logout();
               this.logged_in = false;
             }

@@ -3,5 +3,6 @@ export default {
   '/check': 'Check',
   '/login': 'Login',
   '/register': 'Register',
-  '/training': 'Training'
+  '/training': 'Training',
+  '/collect': 'Collect/Collect'
 }

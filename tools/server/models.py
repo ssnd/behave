@@ -63,3 +63,13 @@ class DataChunk(db.Model):
 	def get_json_data(self):
 		return ast.literal_eval(self.data)
 
+class Collect(db.Model):
+	__tablename__ = "collect"
+	id = db.Column(db.Integer, primary_key=True)
+	collect_data = db.Column(db.String(12000), unique=True)
+
+	def __init__(self, collect_data=None):
+		self.collect_data = collect_data
+
+	def get_json_data(self):
+		return ast.literal_eval(self.collect_data)
