@@ -6,7 +6,8 @@
     <textarea name="input" id="bh-input" rows="10" v-on:keydown="setKeyDuration" v-on:keyup="keypressHandle($event)"></textarea><br>
     <button v-on:click="pushBehaveData" id="bh-submit">
       Submit
-    </button> <span class="key-len">{{ keyHandler.length }}</span>
+    </button>
+    <span class="key-len">{{ keyHandler.length }}</span>
   </div>
 </template>
 <script>
