@@ -5,12 +5,12 @@
 </template>
 <script>
 
-var initSessionStorage = function(){
+var initSessionStorage = () => {
 
-	sessionStorage.setItem('personalData', null);
-	sessionStorage.setItem('dataChunk1', null);
-	sessionStorage.setItem('dataChunk2', null);
-	sessionStorage.setItem('mouseDataChunk', null);
+	sessionStorage.setItem('personalData', "");
+	sessionStorage.setItem('dataChunk1', "");
+	sessionStorage.setItem('dataChunk2', "");
+	sessionStorage.setItem('mouseDataChunk', "");
 
 }
 
@@ -25,7 +25,7 @@ import MouseTest from "./MouseTest.vue"
 export default {
 	data(){
 		return {
-			currentView: 'KeyTest2',
+			currentView: 'MouseTest',
 			submitData: {
 				personalData: "",
 				dataChunk1: "",
@@ -34,6 +34,7 @@ export default {
 			}
 		}
 	},
+
 	components: {
 		'PersonalData': PersonalData,
 		'KeyTest1': KeyTest1,
