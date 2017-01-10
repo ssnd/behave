@@ -136,17 +136,17 @@ export default {
 		},
 
 		onClick(e) {
-			let mousedownTime 	= this.mousedown[this.mousedown.length-1].timestamp,
-				eventType 				= "leftClick",
-				clickTime 				= +new Date(),
-				duration 					= clickTime - mousedownTime;
+			let mousedownTime		= this.mousedown[this.mousedown.length-1].timestamp,
+					event_type			= "leftClick",
+					clickTime				= +new Date(),
+					duration				= clickTime - mousedownTime;
 
 			let currentPosition = {
-				mouseX :			window.mouseX,
-				mouseY :			window.mouseY,
-				timestamp:		clickTime,
-				event:				eventType,
-				duration: 		duration,
+				mouseX		:		window.mouseX,
+				mouseY		:		window.mouseY,
+				timestamp :		clickTime,
+				event 		:		"leftClick",
+				duration	:		duration,
 			}
 
 			this.clicks.push(currentPosition);
@@ -173,6 +173,7 @@ export default {
 		},
 
 		mouseCoordsHandle(e) {
+
 			var event = e || window.event;
 
 			window.mouseX = event.clientX;
@@ -183,10 +184,10 @@ export default {
 
 		onMouseMove() {
 			let currentPosition = {
-				mouseX : 		window.mouseX,
-				mouseY : 		window.mouseY, 
-				timestamp: 	+new Date(),
-				event: 			"mousemove"
+				mouseX:		window.mouseX,
+				mouseY:		window.mouseY, 
+				timestamp:	+new Date(),
+				event:			"mousemove"
 			}
 
 			if (this.coords.length > 1) {
@@ -235,6 +236,8 @@ export default {
 				return x.timestamp-y.timestamp
 			})
 
+			console.log(final_array);
+
 			sessionStorage.setItem('mouseDataChunk', {
 				"coords": 		"",
 				"clicks": 		"",
@@ -243,15 +246,12 @@ export default {
 			});
 
 			this.$http.post('http://127.0.0.1:5000/collect', {
-				personalData: 	sessionStorage.getItem('personalData'),
-				dataChunk1: 		sessionStorage.getItem('dataChunk1'),
-				dataChunk2: 		sessionStorage.getItem('dataChunk2'),
-				mouseDataChunk: sessionStorage.getItem('mouseDataChunk')
+				data: final_array
 			})
 			.then(
 				(response) => {
 					console.log("POST SUCCESS.");
-					window.location.href = "/";
+					// window.location.href = "/";
 				}, 
 				(response) => {
 					console.log("POST FAILED.");

@@ -2,14 +2,14 @@ from flask import request, render_template, redirect, jsonify
 from server import db, app, login_manager
 from models import User, DataChunk, Collect
 from flask_login import login_user, logout_user, current_user, login_required
+from pybrain.supervised.trainers import BackpropTrainer
+from pybrain.datasets.supervised import SupervisedDataSet
+from pybrain.tools.shortcuts import buildNetwork
 import hashlib
 import os, sys
 from blinker import signal
 import json
 import base64
-from pybrain.datasets.supervised import SupervisedDataSet
-from pybrain.tools.shortcuts import buildNetwork
-from pybrain.supervised.trainers import BackpropTrainer
 
 # todo: fix
 sys.path.insert(0, os.path.abspath("../../"))
