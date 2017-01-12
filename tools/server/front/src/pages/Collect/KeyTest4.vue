@@ -1,9 +1,9 @@
 <template>
 <div>
-	<h2 style="text-align:center">Keyboard Typing Test 2</h2>
+	<h2 style="text-align:center">Keyboard Typing Test 4</h2>
 	<div id="bh">
 		<div id="bh-pattern">
-		<span>Type in this text: </span><br>
+		<span>Retype this text: </span><br>
 		When Mr. and Mrs. Dursley woke up on the dull, gray Tuesday our story
 starts, there was nothing about the cloudy sky outside to suggest that
 strange and mysterious things would soon be happening all over the
@@ -36,9 +36,9 @@ Dudley into his high chair.</div>
 			pushBehaveData () {
 				if(this.keyHandler.length >= this.maxChars){
 					let jsonString = JSON.stringify(this.keyHandler);
-					sessionStorage.setItem('dataChunk2', jsonString);
+					sessionStorage.setItem('dataChunk4', jsonString);
 					this.warning = false;
-					this.$parent._data.currentView = "KeyTest3";
+					this.$parent._data.currentView = "MouseTest";
 			}
 			else{
 				this.warning = true;

@@ -66,10 +66,28 @@ class DataChunk(db.Model):
 class Collect(db.Model):
 	__tablename__ = "collect"
 	id = db.Column(db.Integer, primary_key=True)
-	collect_data = db.Column(db.String(12000), unique=True)
+	email = db.Column(db.String(120), unique=False)
+	name = db.Column(db.String(120), unique=False)
+	lastname = db.Column(db.String(120), unique=False)
+	age = db.Column(db.Integer, unique=False)
+	gender = db.Column(db.String(100), unique=False)
+	dataChunk1 = db.Column(db.String(6000), unique=False)
+	dataChunk2 = db.Column(db.String(6000), unique=False)
+	dataChunk3 = db.Column(db.String(6000), unique=False)
+	dataChunk4 = db.Column(db.String(6000), unique=False)
+	mouseDataChunk = db.Column(db.String(8000), unique=False)
 
-	def __init__(self, collect_data=None):
-		self.collect_data = collect_data
+	def __init__(self, email=None, name=None, lastname=None, age=None, gender=None, dataChunk1=None, dataChunk2=None, dataChunk3=None, dataChunk4=None, mouseDataChunk=None):
+		self.email = email
+		self.name = name
+		self.lastname = lastname
+		self.age = age
+		self.gender = gender
+		self.dataChunk1 = dataChunk1
+		self.dataChunk2 = dataChunk2
+		self.dataChunk3 = dataChunk3
+		self.dataChunk4 = dataChunk4
+		self.mouseDataChunk = mouseDataChunk
 
-	def get_json_data(self):
-		return ast.literal_eval(self.collect_data)
+	def get_json_data(self, jsonString=None):
+		return ast.literal_eval(jsonString)

@@ -4,6 +4,7 @@
         <v-link href="/register">Register</v-link>
         <v-link href="/training">Training</v-link>
         <v-link href="/check">Check</v-link>
+        <v-link href="/collect">Collect</v-link>
         <button v-if="logged_in" class="logout" v-on:click="logout()">Logout ({{ logged_user }})</button>
         <button v-if="!logged_in" class="logout" v-on:click="login()">Login</button>
       </div>

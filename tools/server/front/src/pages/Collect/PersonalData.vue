@@ -4,22 +4,31 @@
 		<div class="form-container">
 		<p>Enter your personal data: </p>
 
-		<form v-on:submit="submitForm">
-			<p :class="{ 'control': true }">
-				<input v-model="formData.email" v-validate data-vv-rules="required|email" :class="{'input': true, 'is-danger': errors.has('email') }" name="email" type="text" placeholder="Email" required>
+		<form @submit.prevent="validateBeforeSubmit">
+			<p class="control">
+			<input name="email" v-model="email" v-validate.initial="email" data-vv-rules="required|email" :class="{'input': true, 'is-danger': errors.has('email') }" type="text" placeholder="Email">
 			</p>
-			<p :class="{ 'control': true }">
-				<input v-model="formData.name" v-validate data-vv-rules="required" :class="{'input': true, 'is-danger': errors.has('name') }" name="name" type="text" placeholder="First Name" required>
+			<p class="control">
+			<input name="name" v-model="name" v-validate.initial="name" data-vv-rules="required" :class="{'input': true, 'is-danger': errors.has('name') }" type="text" placeholder="Name">
 			</p>
-			<p :class="{ 'control': true }">
-				<input v-model="formData.lastname" v-validate data-vv-rules="required" :class="{'input': true, 'is-danger': errors.has('lastname') }" name="lastname" type="text" placeholder="Last Name" required>
+			<p class="control">
+			<input name="lastname" v-model="lastname" v-validate.initial="lastname" data-vv-rules="required" :class="{'input': true, 'is-danger': errors.has('lastname') }" type="text" placeholder="Lastname">
 			</p>
-			<p :class="{ 'control': true }">
-				<input v-model="formData.age" v-validate data-vv-rules="required" :class="{'input': true, 'is-danger': errors.has('age') }" name="age" type="text" placeholder="Your Age" required>
+			<p class="control">
+			<input name="age" v-model="age" v-validate.initial="age" data-vv-rules="required|numeric" :class="{'input': true, 'is-danger': errors.has('age') }" type="text" placeholder="Age">
 			</p>
-			<p :class="{ 'control': true }">
-				<input v-model="formData.gender" v-validate data-vv-rules="required" :class="{'input': true, 'is-danger': errors.has('gender') }" name="gender" type="text" placeholder="Gender" required>
+			<p class="control">
+				<label class="radio">
+					<input v-model="gender" class="radio" name="gender" v-validate data-vv-rules="required|in:male, female" value="male" type="radio">
+					Male
+				</label>
+				<label class="radio">
+					<input v-model="gender" class="radio" name="gender" value="female" type="radio">
+					Female
+				</label><br>
+			<span class="help checkbox-danger" v-show="errors.has('gender')">{{ errors.first('gender') }}</span><br>
 			</p>
+
 
 			<input type="submit" name="submit" class="submit" value="Next">
 		</form>
@@ -34,21 +43,32 @@
 export default {
 	data() {
 		return {
-			formData: {
-				email: "",
-				name: "",
-				lastname: "",
-				age: "",
-				gender: ""
-			}
+			email: "",
+			name: "",
+			lastname: "",
+			age: "",
+			gender: ""
 		}
 	},
 
 	methods : {
-		submitForm(e) {
-			e.preventDefault();
-			sessionStorage.setItem('personalData', this.formData);
-			this.$parent._data.currentView = "KeyTest1";
+		validateBeforeSubmit() { 
+
+			this.$validator.validateAll().then(success => {
+				if (! success) {
+					console.log("Validate");
+					return;
+				}
+				
+				sessionStorage.setItem('email', this.email);
+				sessionStorage.setItem('name', this.name);
+				sessionStorage.setItem('lastname', this.lastname);
+				sessionStorage.setItem('age', this.age);
+				sessionStorage.setItem('gender', this.gender);
+
+				this.$parent._data.currentView = "KeyTest1";
+
+			});
 		}
 	}
 }

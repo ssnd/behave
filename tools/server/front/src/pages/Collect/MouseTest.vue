@@ -12,6 +12,16 @@
 			<div data-event="double" class="mouse-btn" style="top: 100px; left: 250px">Double Click</div>
 			<div data-event="double" class="mouse-btn" style="top: 270px; left: 300px">Double Click</div>
 			<div data-event="double" class="mouse-btn" style="top: 60px; right: 150px">Double Click</div>
+			<div data-event="left" class="mouse-btn" style="top: 15px; left: 15px">Left Click</div>
+			<div data-event="left" class="mouse-btn" style="bottom: 150px; right: 15px">Left Click</div>
+			<div data-event="right" class="mouse-btn" style="top: 150px; right: 15px">Right Click</div>
+			<div data-event="left" class="mouse-btn" style="bottom: 15px; left: 15px">Left Click</div>
+			<div data-event="right" class="mouse-btn" style="top: 100px; left: 250px">Right Click</div>
+			<div data-event="left" class="mouse-btn" style="top: 270px; left: 300px">Left Click</div>
+			<div data-event="right" class="mouse-btn" style="top: 60px; right: 150px">Right Click</div>
+			<div data-event="double" class="mouse-btn" style="top: 200px; left: 350px">Double Click</div>
+			<div data-event="double" class="mouse-btn" style="top: 170px; left: 200px">Double Click</div>
+			<div data-event="double" class="mouse-btn" style="top: 60px; right: 150px">Double Click</div>
 		</div>
 		<input type="submit" name="submit" id="mouse-push" class="submit" value="Next" v-on:click="pushMouseData"> 
 	</div>
@@ -144,8 +154,8 @@ export default {
 			let currentPosition = {
 				mouseX		:		window.mouseX,
 				mouseY		:		window.mouseY,
-				timestamp :		clickTime,
-				event 		:		"leftClick",
+				timestamp	:		clickTime,
+				event		:		"leftClick",
 				duration	:		duration,
 			}
 
@@ -236,31 +246,14 @@ export default {
 				return x.timestamp-y.timestamp
 			})
 
-			console.log(final_array);
+			let jsonData = JSON.stringify(final_array)
+			sessionStorage.setItem('mouseDataChunk', jsonData);
 
-			sessionStorage.setItem('mouseDataChunk', {
-				"coords": 		"",
-				"clicks": 		"",
-				"dbclicks": 	"",
-				"mousedown": 	""
-			});
-
-			this.$http.post('http://127.0.0.1:5000/collect', {
-				data: final_array
-			})
-			.then(
-				(response) => {
-					console.log("POST SUCCESS.");
-					// window.location.href = "/";
-				}, 
-				(response) => {
-					console.log("POST FAILED.");
-				}
-			);
+			this.$parent._data.currentView = "Final";
 		}
 	}
 }
 
 
 
-</script>	
+</script>

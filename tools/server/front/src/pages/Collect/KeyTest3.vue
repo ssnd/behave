@@ -1,15 +1,16 @@
 <template>
 <div>
-	<h2 style="text-align:center">Keyboard Typing Test 2</h2>
+	<h2 style="text-align:center">Keyboard Typing Test 3</h2>
 	<div id="bh">
 		<div id="bh-pattern">
-		<span>Type in this text: </span><br>
-		When Mr. and Mrs. Dursley woke up on the dull, gray Tuesday our story
-starts, there was nothing about the cloudy sky outside to suggest that
-strange and mysterious things would soon be happening all over the
-country. Mr. Dursley hummed as he picked out his most boring tie for
-work, and Mrs. Dursley gossiped away happily as she wrestled a screaming
-Dudley into his high chair.</div>
+		<span>Retype this text: </span><br>
+		Mr. Dursley was the director of a firm called Grunnings, which made
+drills. He was a big, beefy man with hardly any neck, although he did
+have a very large mustache. Mrs. Dursley was thin and blonde and had
+nearly twice the usual amount of neck, which came in very useful as she
+spent so much of her time craning over garden fences, spying on the
+neighbors. The Dursleys had a small son called Dudley and in their
+opinion there was no finer boy anywhere.</div>
 		<textarea name="input" id="bh-input" rows="10" v-on:keydown="setKeyDuration" v-on:keyup="keypressHandle($event)"></textarea><br>
 		<input type="submit" name="submit" class="submit" value="Next" v-on:click="pushBehaveData"> 
 		<span class="key-len">{{ keyHandler.length }}</span>
@@ -36,9 +37,9 @@ Dudley into his high chair.</div>
 			pushBehaveData () {
 				if(this.keyHandler.length >= this.maxChars){
 					let jsonString = JSON.stringify(this.keyHandler);
-					sessionStorage.setItem('dataChunk2', jsonString);
+					sessionStorage.setItem('dataChunk3', jsonString);
 					this.warning = false;
-					this.$parent._data.currentView = "KeyTest3";
+					this.$parent._data.currentView = "KeyTest4";
 			}
 			else{
 				this.warning = true;

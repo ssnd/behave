@@ -198,7 +198,29 @@ def register():
 @app.route("/collect", methods=["GET", "POST"])
 def collect():
 
-	c = Collect(str(request.json))
+	email			= request.json['email']
+	name			= request.json['name']
+	lastname		= request.json['lastname']
+	age				= request.json['age']
+	gender			= request.json['gender']
+	dataChunk1		= request.json['dataChunk1']
+	dataChunk2		= request.json['dataChunk2']
+	dataChunk3		= request.json['dataChunk3']
+	dataChunk4		= request.json['dataChunk4']
+	mouseDataChunk	= request.json['mouseDataChunk']
+
+	c = Collect(
+		email,
+		name,
+		lastname,
+		age,
+		gender,
+		dataChunk1,
+		dataChunk2,
+		dataChunk3,
+		dataChunk4,
+		mouseDataChunk
+	)
 
 	db.session.add(c)
 	db.session.commit()
