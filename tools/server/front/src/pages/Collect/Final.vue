@@ -21,7 +21,10 @@
 					"dataChunk2":		sessionStorage.getItem('dataChunk2'),
 					"dataChunk3":		sessionStorage.getItem('dataChunk3'),
 					"dataChunk4":		sessionStorage.getItem('dataChunk4'),
-					"mouseDataChunk":	sessionStorage.getItem('mouseDataChunk')
+					"mouseDataChunk1":	sessionStorage.getItem('mouseDataChunk1'),
+					"mouseDataChunk2":	sessionStorage.getItem('mouseDataChunk2'),
+					"mouseDataChunk3":	sessionStorage.getItem('mouseDataChunk3'),
+					"mouseDataChunk4":	sessionStorage.getItem('mouseDataChunk4')
 				})
 				.then(
 					(response) => {

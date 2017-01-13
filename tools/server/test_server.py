@@ -207,7 +207,10 @@ def collect():
 	dataChunk2		= request.json['dataChunk2']
 	dataChunk3		= request.json['dataChunk3']
 	dataChunk4		= request.json['dataChunk4']
-	mouseDataChunk	= request.json['mouseDataChunk']
+	mouseDataChunk1	= request.json['mouseDataChunk1']
+	mouseDataChunk2	= request.json['mouseDataChunk2']
+	mouseDataChunk3	= request.json['mouseDataChunk3']
+	mouseDataChunk4	= request.json['mouseDataChunk4']
 
 	c = Collect(
 		email,
@@ -219,7 +222,10 @@ def collect():
 		dataChunk2,
 		dataChunk3,
 		dataChunk4,
-		mouseDataChunk
+		mouseDataChunk1,
+		mouseDataChunk2,
+		mouseDataChunk3,
+		mouseDataChunk4
 	)
 
 	db.session.add(c)

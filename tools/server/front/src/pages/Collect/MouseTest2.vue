@@ -1,6 +1,6 @@
 <template>
 	<div id="mouse-test-container">
-		<h2 style="text-align:center">Mouse Behaviour Test</h2>
+		<h2 style="text-align:center">Mouse Behaviour Test 2</h2>
 		<div id="mouse-window">
 			<div data-event="left" class="mouse-btn" style="top: 15px; left: 15px">Left Click</div>
 			<div data-event="left" class="mouse-btn" style="bottom: 15px; right: 15px">Left Click</div>
@@ -247,9 +247,9 @@ export default {
 			})
 
 			let jsonData = JSON.stringify(final_array)
-			sessionStorage.setItem('mouseDataChunk', jsonData);
+			sessionStorage.setItem('mouseDataChunk2', jsonData);
 
-			this.$parent._data.currentView = "Final";
+			this.$parent._data.currentView = "MouseTest3";
 		}
 	}
 }

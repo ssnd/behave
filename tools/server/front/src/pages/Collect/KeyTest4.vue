@@ -38,7 +38,7 @@ Dudley into his high chair.</div>
 					let jsonString = JSON.stringify(this.keyHandler);
 					sessionStorage.setItem('dataChunk4', jsonString);
 					this.warning = false;
-					this.$parent._data.currentView = "MouseTest";
+					this.$parent._data.currentView = "MouseTest1";
 			}
 			else{
 				this.warning = true;

@@ -75,9 +75,12 @@ class Collect(db.Model):
 	dataChunk2 = db.Column(db.String(6000), unique=False)
 	dataChunk3 = db.Column(db.String(6000), unique=False)
 	dataChunk4 = db.Column(db.String(6000), unique=False)
-	mouseDataChunk = db.Column(db.String(8000), unique=False)
+	mouseDataChunk1 = db.Column(db.String(8000), unique=False)
+	mouseDataChunk2 = db.Column(db.String(8000), unique=False)
+	mouseDataChunk3 = db.Column(db.String(8000), unique=False)
+	mouseDataChunk4 = db.Column(db.String(8000), unique=False)
 
-	def __init__(self, email=None, name=None, lastname=None, age=None, gender=None, dataChunk1=None, dataChunk2=None, dataChunk3=None, dataChunk4=None, mouseDataChunk=None):
+	def __init__(self, email=None, name=None, lastname=None, age=None, gender=None, dataChunk1=None, dataChunk2=None, dataChunk3=None, dataChunk4=None, mouseDataChunk1=None, mouseDataChunk2=None, mouseDataChunk3=None, mouseDataChunk4=None):
 		self.email = email
 		self.name = name
 		self.lastname = lastname
@@ -87,7 +90,10 @@ class Collect(db.Model):
 		self.dataChunk2 = dataChunk2
 		self.dataChunk3 = dataChunk3
 		self.dataChunk4 = dataChunk4
-		self.mouseDataChunk = mouseDataChunk
+		self.mouseDataChunk1 = mouseDataChunk1
+		self.mouseDataChunk2 = mouseDataChunk2
+		self.mouseDataChunk3 = mouseDataChunk3
+		self.mouseDataChunk4 = mouseDataChunk4
 
 	def get_json_data(self, jsonString=None):
 		return ast.literal_eval(jsonString)

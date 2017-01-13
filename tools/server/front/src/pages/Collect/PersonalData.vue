@@ -19,7 +19,7 @@
 			</p>
 			<p class="control">
 				<label class="radio">
-					<input v-model="gender" class="radio" name="gender" v-validate data-vv-rules="required|in:male, female" value="male" type="radio">
+					<input v-model="gender" class="radio" name="gender" value="male" type="radio">
 					Male
 				</label>
 				<label class="radio">
