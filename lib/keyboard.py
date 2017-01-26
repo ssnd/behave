@@ -1,5 +1,5 @@
 from behave import Behave
-
+import ast, os, math
 class Keyboard(Behave):
 	"""Instance of the Behave class. Gathers the keystroke dynamics information.
 
@@ -28,7 +28,11 @@ class Keyboard(Behave):
 				...
 				]
 		"""
-		Behave.__init__(self, data=data)
+		Behave.__init__(self, data)
+
+
+
+		self.data = ast.literal_eval(data)
 
 		self.timestamps = [keystroke['timestamp'] for keystroke in self.data]
 
@@ -44,7 +48,7 @@ class Keyboard(Behave):
 			TYPE: Array
 		"""
 
-		keystroke_rates = []
+		keystroke_rates_arr = []
 
 		for index, timestamp in enumerate(self.timestamps[1:]):
 
@@ -52,11 +56,12 @@ class Keyboard(Behave):
 
 			time_delta_seconds = time_delta / 100.0
 
-			keystrokes_per_second = 1 / time_delta_seconds
+			if time_delta_seconds > 0.1:
+				keystrokes_per_second = 1 / time_delta_seconds
 
-			arr.append(keystrokes_per_second)
+				keystroke_rates_arr.append(keystrokes_per_second)
 
-		return keystroke_rates
+		return keystroke_rates_arr
 
 
 
@@ -69,3 +74,20 @@ class Keyboard(Behave):
 		delays = [int(self.timestamps[i+1] - self.timestamps[i]) for i in range(len(self.timestamps) - 1)]
 
 		return delays
+
+	def get_keyboard_params(self):
+		"""
+		Returns an array of all analyzed values as a dictionary
+		"""
+
+		val_arr = {}
+
+		val_arr['delay_avg'] = self.average(self.delay_durations())
+
+		val_arr['delay_deviation'] = self.standart_deviation(self.delay_durations())
+
+		val_arr['rate_avg'] = self.average(self.keystroke_rates())
+
+		val_arr['rate_deviation'] = self.standart_deviation(self.keystroke_rates())
+
+		return val_arr

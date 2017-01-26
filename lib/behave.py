@@ -57,7 +57,7 @@ class Behave():
 			arr (Array): Input array
 		
 		Returns:
-			Array: Calculated deviation
+			Number: Calculated deviation
 		"""
 
 		length = len(arr)
@@ -72,10 +72,9 @@ class Behave():
 
 		return deviation
 
+	def normalize_data(self, min_max_values, params):
 
-	def normalize_data(self, min_max_values):
-
-		user_data = self.get_all_params()
+		user_data = params
 
 		user_data_values = user_data.values()
 
@@ -93,6 +92,8 @@ class Behave():
 			normalized_data.append(calc_val)
 
 		return tuple(normalized_data)
+
+
 
 	@staticmethod
 	def normalize_training_data(training_data):
