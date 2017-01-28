@@ -30,8 +30,6 @@ class Keyboard(Behave):
 		"""
 		Behave.__init__(self, data)
 
-
-
 		self.data = ast.literal_eval(data)
 
 		self.timestamps = [keystroke['timestamp'] for keystroke in self.data]

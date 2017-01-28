@@ -1,5 +1,5 @@
 from behave import Behave
-import math
+import ast, os, math
 
 class Mouse(Behave):
 	"""Instance of the Behave class. Gathers the mouse dynamics information.
@@ -15,9 +15,11 @@ class Mouse(Behave):
 
 		self.mouse_move_events = []
 
-		Behave.__init__(self, data=data)
+		Behave.__init__(self, data)
+		self.data = ast.literal_eval(data)
+		
 
-		for chunk in data:
+		for chunk in self.data:
 
 			if chunk['event'] == "mousemove":
 				self.mouse_move_events.append(chunk)
@@ -42,21 +44,25 @@ class Mouse(Behave):
 
 		for index, chunk in enumerate(self.mouse_move_events[1:-1]):
 
-			current_position = (chunk['mouseX'],chunk['mouseY'])
+			try:
+				current_position = (chunk['mouseX'],chunk['mouseY'])
 
-			last_chunk = self.mouse_move_events[index]
+				last_chunk = self.mouse_move_events[index]
 
-			last_position = (last_chunk['mouseX'], last_chunk['mouseY'])
+				last_position = (last_chunk['mouseX'], last_chunk['mouseY'])
 
-			vector_coords = self.vector_coords(current_position, last_position)
+				vector_coords = self.vector_coords(current_position, last_position)
 
-			distance = self.vector_length(vector_coords[0], vector_coords[1])
+				distance = self.vector_length(vector_coords[0], vector_coords[1])
 
-			time_diff = chunk['timestamp'] - last_chunk['timestamp']
+				time_diff = chunk['timestamp'] - last_chunk['timestamp']
 
-			speed = distance/time_diff
+				speed = distance/time_diff
 
-			speed_arr.append(speed)
+				speed_arr.append(speed)
+
+			except:
+				e=1
 
 		return speed_arr
 
@@ -67,19 +73,22 @@ class Mouse(Behave):
 		angles = []
 		
 		for index, chunk in enumerate(self.mouse_move_events[1:-1]):
+			
+			try:
+				current_position = (chunk['mouseX'],chunk['mouseY'])
 
-			current_position = (chunk['mouseX'],chunk['mouseY'])
+				last_chunk = self.mouse_move_events[index]
 
-			last_chunk = self.mouse_move_events[index]
+				last_position = (last_chunk['mouseX'], last_chunk['mouseY'])
 
-			last_position = (last_chunk['mouseX'], last_chunk['mouseY'])
+				vector_coords=self.vector_coords(current_position, last_position)
+				if 0 not in vector_coords:
 
-			vector_coords=self.vector_coords(current_position, last_position)
-			if 0 not in vector_coords:
+					angle = math.atan(vector_coords[1]/vector_coords[0])
 
-				angle = math.atan(vector_coords[1]/vector_coords[0])
-
-				angles.append(angle*57.2958)
+					angles.append(angle*57.2958)
+			except:
+				e=1
 
 		return angles
 
@@ -102,6 +111,23 @@ class Mouse(Behave):
 
 		return distance
 
+	def get_mouse_params(self):
+		"""
+		Returns an array of all analyzed values as a dictionary
+		"""
+
+		val_arr = {}
+
+		val_arr['movespeed_avg'] = self.average(self.move_speed())
+
+		val_arr['movespeed_deviation'] = self.standart_deviation(self.move_speed())
+
+		val_arr['angles_avg'] = self.average(self.angles())
+
+		val_arr['angles_deviation'] = self.standart_deviation(self.angles())
+
+
+		return val_arr
 
 
 

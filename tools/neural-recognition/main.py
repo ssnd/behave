@@ -22,6 +22,8 @@ for user_index in range(len(users)):
 
 	keyboard_data_chunks = [user.dataChunk1, user.dataChunk2, user.dataChunk3]
 
+	mouse_data_chunks = [user.mouseDataChunk1, user.mouseDataChunk2, user.mouseDataChunk3]
+
 	for data_chunk in keyboard_data_chunks:
 
 		instance = Keyboard(data=data_chunk)
@@ -36,7 +38,21 @@ for user_index in range(len(users)):
 
 		training_data.append(prepared_dict)
 
+	for mouse_data_chunk in mouse_data_chunks:
+
+		instance = Mouse(data=mouse_data_chunk)
+
+		params = instance.get_mouse_params()
+
+		prepared_dict = {
+			"data" : params, 
+			"response" : user_index
+		}
+
+		training_data.append(prepared_dict)
+
 normalized_data = Behave.normalize_training_data(training_data)
+
 
 min_max = normalized_data['min_max']
 
