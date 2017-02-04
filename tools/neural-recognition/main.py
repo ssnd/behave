@@ -11,7 +11,14 @@ from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.datasets.supervised import SupervisedDataSet
 from pybrain.tools.shortcuts import buildNetwork
 
-users = models.Collect.query.all()[15:15+10]
+
+hiddenLayers = 6
+startRange = 5
+checkingRange = 3
+
+
+users = models.Collect.query.all()[startRange:startRange+checkingRange]
+
 user_count = len(users)
 
 training_data = []
@@ -43,8 +50,9 @@ for user_index in range(len(users)):
 normalized_data = Behave.normalize_training_data(training_data)
 
 
-
 min_max = normalized_data['min_max']
+
+# Setting Dataset For Network
 
 ds = SupervisedDataSet(8, user_count)
 
@@ -53,63 +61,58 @@ for index in range(len(normalized_data['responses'])):
 	input = normalized_data['data'][index]
 
 	output = normalized_data['responses'][index]
-	# print (input, output)
 
-	# print "i: ", input, "...o: ", output
 	ds.addSample(input, output)
 
 
-net = buildNetwork(8, 25,user_count)
+# Network Initialization
+
+net = buildNetwork(8, hiddenLayers, user_count)
 
 trainer = BackpropTrainer(net, learningrate = 0.01, momentum = 0.99)
 
-print "Training network..."
+# Network Training
+
+print "Training network with", hiddenLayers, "Hidden Layers..."
 trainer.trainOnDataset(ds, 1000)
 
 trainer.testOnData()
 
-# CHECKING NETWORK
-print "Checking network: "
+# Network Activation
 
-checking_id = 6;
+for checkingID in range(checkingRange):
 
-user = users[checking_id]
+	user = users[checkingID]
 
-print "User: ", user.id
 
-keyboard_test_data = user.dataChunk3
+	keyboard_test_data = user.dataChunk4
+	mouse_test_data = user.mouseDataChunk4
 
-mouse_test_data = user.mouseDataChunk3
+	keyboard_test_instance = Keyboard(data=keyboard_test_data)
+	mouse_test_instance = Mouse(data=mouse_test_data)
 
-keyboard_test_instance = Keyboard(data=keyboard_test_data)
+	test_data_to_normalize = dict(keyboard_test_instance.get_keyboard_params().items() + mouse_test_instance.get_mouse_params().items())
 
-mouse_test_instance = Mouse(data=mouse_test_data)
+	nd = keyboard_test_instance.normalize_data(min_max, test_data_to_normalize)
 
-test_data_to_normalize = dict(keyboard_test_instance.get_keyboard_params().items() + mouse_test_instance.get_mouse_params().items())
+	print "Response: "
 
-print test_data_to_normalize
+	response = net.activate(nd)
 
-nd = keyboard_test_instance.normalize_data(min_max, test_data_to_normalize)
+	print response
 
-#print "Normalized data: ", test_data_to_normalize, " / _ / ", nd
+	maxResponse = -1
 
-print "Response: "
+	result = None
 
-response = net.activate(nd)
+	for i in range(len(response)):
+		if response[i] > maxResponse:
+			maxResponse = response[i]
+			result = i
 
-print response
+	print "User: ", checkingID
 
-result = None
+	if maxResponse > 0.5: print "Guessed user: ", result
+	else: print "Guessed user: NONE"
 
-maxResponse = 0
-
-for i in range(len(response)):
-	if response[i] > maxResponse:
-		result = i
-		maxResponse = response[i]
-
-if maxResponse > 0.5: print "Guessed user is: ", users[result].id
-else: print "Guessed < 0.5 user is: ", users[result].id 
-
-if users[result].id == user.id: print "TRUE"
-else: print "FALSE"
+	print "------------------------"
