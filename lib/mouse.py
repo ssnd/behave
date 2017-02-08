@@ -118,13 +118,14 @@ class Mouse(Behave):
 
 		val_arr = {}
 
+		#
 		val_arr['movespeed_avg'] = self.average(self.move_speed())
 
-		val_arr['movespeed_deviation'] = self.standart_deviation(self.move_speed())
+		#val_arr['movespeed_deviation'] = self.standart_deviation(self.move_speed())
 
-		val_arr['angles_avg'] = self.average(self.angles())
+		#val_arr['angles_avg'] = self.average(self.angles())
 
-		val_arr['angles_deviation'] = self.standart_deviation(self.angles())
+		#val_arr['angles_deviation'] = self.standart_deviation(self.angles())
 
 
 		return val_arr

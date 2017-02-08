@@ -61,17 +61,92 @@ class Keyboard(Behave):
 
 		return keystroke_rates_arr
 
+	def dwell_time(self):
+		"""Return an array of keypress durations
 
+		Returns:
+			TYPE: Array
+		"""
 
-	def delay_durations(self):
-		"""Return an array of delays between each keystroke.
+		press_durations_arr = []
+
+		# ...
+
+		press_durations_arr = self.durations
+
+		return press_durations_arr
+
+	def flight_time(self):
+		"""Return an array of delays between previous key release and next keypress.
 		
 		Returns:
 			Array: Array of delays.
 		"""
-		delays = [int(self.timestamps[i+1] - self.timestamps[i]) for i in range(len(self.timestamps) - 1)]
+		delays = []
 
-		return delays
+		for i in range(1, len(self.timestamps) - 1):
+			previousRelease = self.timestamps[i]
+			nextPress = self.timestamps[i+1] - self.durations[i+1]
+			flightTime = nextPress - previousRelease
+			delays.append(flightTime)
+
+		flight_deviation = self.standart_deviation(delays)
+
+		delays_filtered = []
+
+		for val in delays:
+			if val > -flight_deviation and val < flight_deviation:
+				delays_filtered.append(val)
+
+		return {"_word": [i for i in delays if i not in delays_filtered], "_letter": delays_filtered}
+
+	def press_to_press(self):
+		"""Return an array of delays between keypresses.
+		
+		Returns:
+			Array: Array of delays.
+		"""
+		delays = []
+
+		for i in range(1, len(self.timestamps) - 1):
+			previousPress = self.timestamps[i] - self.durations[i]
+			nextPress = self.timestamps[i+1] - self.durations[i+1]
+			pressToPress = nextPress - previousPress
+			delays.append(pressToPress)
+
+		ptop_deviation = self.standart_deviation(delays)
+
+		delays_filtered = []
+
+		for val in delays:
+			if val > -ptop_deviation and val < ptop_deviation:
+				delays_filtered.append(val)
+
+		return {"_word": [i for i in delays if i not in delays_filtered], "_letter": delays_filtered}
+
+	def release_to_release(self):
+		"""Return an array of delays between key releases.
+		
+		Returns:
+			Array: Array of delays.
+		"""
+		delays = []
+
+		for i in range(1, len(self.timestamps) - 1):
+			previousRelease = self.timestamps[i] 
+			nextRelease = self.timestamps[i+1]
+			releaseToRelease = nextRelease - previousRelease
+			delays.append(releaseToRelease)
+
+		rtor_deviation = self.standart_deviation(delays)
+
+		delays_filtered = []
+
+		for val in delays:
+			if val > -rtor_deviation and val < rtor_deviation:
+				delays_filtered.append(val)
+
+		return {"_word": [i for i in delays if i not in delays_filtered], "_letter": delays_filtered}
 
 	def get_keyboard_params(self):
 		"""
@@ -80,12 +155,32 @@ class Keyboard(Behave):
 
 		val_arr = {}
 
-		val_arr['delay_avg'] = self.average(self.delay_durations())
+		# val_arr['flight_word_avg'] = self.average(self.flight_time()["_word"])
 
-		val_arr['delay_deviation'] = self.standart_deviation(self.delay_durations())
+		# val_arr['flight_word_deviation'] = self.standart_deviation(self.flight_time()["_word"])
 
-		val_arr['rate_avg'] = self.average(self.keystroke_rates())
+		# val_arr['pressToPress_word_avg'] = self.average(self.press_to_press()["_word"])
 
-		val_arr['rate_deviation'] = self.standart_deviation(self.keystroke_rates())
+		#val_arr['pressToPress_word_deviation'] = self.standart_deviation(self.press_to_press()["_word"])
+
+		#val_arr['releaseToRelease_word_avg'] = self.average(self.release_to_release()["_word"])
+
+		#val_arr['releaseToRelease_word_deviation'] = self.standart_deviation(self.release_to_release()["_word"])
+
+		val_arr['flight_letter_avg'] = self.average(self.flight_time()["_letter"])
+
+		val_arr['flight_letter_deviation'] = self.standart_deviation(self.flight_time()["_letter"])
+
+		val_arr['pressToPress_letter_avg'] = self.average(self.press_to_press()["_letter"])
+
+		val_arr['pressToPress_letter_deviation'] = self.standart_deviation(self.press_to_press()["_letter"])
+
+		val_arr['releaseToRelease_letter_avg'] = self.average(self.release_to_release()["_letter"])
+
+		val_arr['releaseToRelease_letter_deviation'] = self.standart_deviation(self.release_to_release()["_letter"])
+
+		val_arr['dwell_avg'] = self.average(self.dwell_time())
+
+		val_arr['dwell_deviation'] = self.standart_deviation(self.dwell_time())
 
 		return val_arr

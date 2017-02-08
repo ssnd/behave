@@ -12,24 +12,29 @@ from pybrain.datasets.supervised import SupervisedDataSet
 from pybrain.tools.shortcuts import buildNetwork
 
 
-hiddenLayers = 6
-startRange = 5
-checkingRange = 3
+hiddenLayers = int(sys.argv[1])
+startRange = 4
+checkingRange = 20
 
+testingGroup = [2, 3, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 22]
 
-users = models.Collect.query.all()[startRange:startRange+checkingRange]
+#users = models.Collect.query.all()[startRange:startRange+checkingRange]
+
+users = [models.Collect.query.all()[i] for i in testingGroup]
 
 user_count = len(users)
 
 training_data = []
 
+params_count = 0
+
 for user_index in range(len(users)):
 
 	user = users[user_index]
 
-	keyboard_data_chunks = [user.dataChunk1, user.dataChunk2, user.dataChunk3]
+	keyboard_data_chunks = [ user.dataChunk1, user.dataChunk2, user.dataChunk3]
 
-	mouse_data_chunks = [user.mouseDataChunk1, user.mouseDataChunk2, user.mouseDataChunk3]
+	mouse_data_chunks = [ user.mouseDataChunk1, user.mouseDataChunk2, user.mouseDataChunk3]
 
 	for i in range(len(keyboard_data_chunks)):
 
@@ -38,6 +43,8 @@ for user_index in range(len(users)):
 		mouse_instance = Mouse(data=mouse_data_chunks[i])
 
 		params = dict(keyboard_instance.get_keyboard_params().items() + mouse_instance.get_mouse_params().items())
+
+		params_count = len(params)
 
 		prepared_dict = {
 			"data" : params,
@@ -54,7 +61,7 @@ min_max = normalized_data['min_max']
 
 # Setting Dataset For Network
 
-ds = SupervisedDataSet(8, user_count)
+ds = SupervisedDataSet(params_count, user_count)
 
 for index in range(len(normalized_data['responses'])):
 
@@ -67,7 +74,7 @@ for index in range(len(normalized_data['responses'])):
 
 # Network Initialization
 
-net = buildNetwork(8, hiddenLayers, user_count)
+net = buildNetwork(params_count, hiddenLayers, user_count)
 
 trainer = BackpropTrainer(net, learningrate = 0.01, momentum = 0.99)
 
@@ -78,9 +85,11 @@ trainer.trainOnDataset(ds, 1000)
 
 trainer.testOnData()
 
+
+
 # Network Activation
 
-for checkingID in range(checkingRange):
+for checkingID in range(len(users)):
 
 	user = users[checkingID]
 
@@ -93,10 +102,12 @@ for checkingID in range(checkingRange):
 
 	test_data_to_normalize = dict(keyboard_test_instance.get_keyboard_params().items() + mouse_test_instance.get_mouse_params().items())
 
+	# print "User: ", checkingID, ": ", test_data_to_normalize
+
 	nd = keyboard_test_instance.normalize_data(min_max, test_data_to_normalize)
 
+	
 	print "Response: "
-
 	response = net.activate(nd)
 
 	print response
@@ -113,6 +124,7 @@ for checkingID in range(checkingRange):
 	print "User: ", checkingID
 
 	if maxResponse > 0.5: print "Guessed user: ", result
-	else: print "Guessed user: NONE"
+	else: print "Guessed user: NONE (", result, ")"
 
 	print "------------------------"
+	
