@@ -56,8 +56,7 @@ for user_index in range(len(users)):
 
 normalized_data = Behave.normalize_training_data(training_data)
 
-
-min_max = normalized_data['min_max']
+_mean, _stddev = normalized_data["mean"], normalized_data["stddev"]
 
 # Setting Dataset For Network
 
@@ -76,7 +75,7 @@ for index in range(len(normalized_data['responses'])):
 
 net = buildNetwork(params_count, hiddenLayers, user_count)
 
-trainer = BackpropTrainer(net, learningrate = 0.01, momentum = 0.99)
+trainer = BackpropTrainer(net, learningrate = 0.001, momentum = 0.99, weightdecay = 0.01)
 
 # Network Training
 
@@ -104,7 +103,7 @@ for checkingID in range(len(users)):
 
 	# print "User: ", checkingID, ": ", test_data_to_normalize
 
-	nd = keyboard_test_instance.normalize_data(min_max, test_data_to_normalize)
+	nd = keyboard_test_instance.normalize_data(test_data_to_normalize, _mean, _stddev)
 
 	
 	print "Response: "

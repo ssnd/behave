@@ -72,22 +72,15 @@ class Behave():
 
 		return deviation
 
-	def normalize_data(self, min_max_values, params):
-
-		user_data = params
-
-		user_data_values = user_data.values()
+	def normalize_data(self, params, mean, stddev):
 
 		normalized_data = []
 
-		for key in range(len(user_data_values)):
+		for param in params:
 
-			minv = min_max_values[key][0]
-			maxv = min_max_values[key][1]
+			val = params[param]
 
-			value = user_data_values[key]
-
-			calc_val = (value-minv)/(maxv-minv)
+			calc_val = (val - mean[param]) / stddev[param]
 
 			normalized_data.append(calc_val)
 
@@ -97,7 +90,7 @@ class Behave():
 
 	@staticmethod
 	def normalize_training_data(training_data):
-		"""Normalizes the passed training data and prepares it for use in neural network.
+		"""Normalizes the passed training data and prepares it for use in neural network. (Gaussian Normalization)
 		
 		Args:
 			training_data (array): The array should consist of dictionaries. Each should have two indexes: 
@@ -106,45 +99,54 @@ class Behave():
 
 		Returns:
 			dict: Returns a dictionary with the following indexes:
-				1) 'min_max': minimum and maximum values used in normalization for this chunk of data
-				2) 'data' : tuples with input data for training
-				3) 'responses' : tuples with responses for training
+				1) 'data' : tuples with input data for training
+				2) 'responses' : tuples with responses for training
+				3) 'mean' : mean values of gaussian normalization
+				4) 'stddev' : standart deviation values of gaussian normalization
 		"""
-
-		params_arr = []
 		resp = []
 		resp_ids = []
-		min_max_values = []
-		avg_data_arr = []
+		data=[]
+		avg_data_arr=[]
 
+		params_dict = {}
+
+		param_mean = {}
+		param_stddev = {}
+
+		for key in training_data[0]['data']: params_dict[key] = []
 
 		for i in range(len(training_data)):
 
-			params_dict = training_data[i]['data']
+			user_params = training_data[i]['data']
 
-			params_arr.append([params_dict[key]*1.0 for key in params_dict])
+			for param in user_params:
+				params_dict[param].append(user_params[param] * 1.0)
 
 			resp_ids.append(training_data[i]['response'])
 
+		# calculating mean and stddev for every parameter
 
-		for i in range(len(params_dict)):
+		for param in params_dict:
+			
+			param_data = params_dict[param]
 
-			param_data = zip(*params_arr)[i]
+			param_mean[param] = Behave.average(param_data)
 
-			maxv = max(param_data)
-			minv = min(param_data)
+			param_stddev[param] = Behave.standart_deviation(param_data)
 
-			min_max = (minv, maxv)
+		
+		for param in params_dict:
+			
+			param_data = params_dict[param]
 
-			min_max_values.append(min_max)
-
-			avg_data = [(val-minv)/(maxv-minv) for val in param_data]
+			avg_data = [((val - param_mean[param])/param_stddev[param])*1.0 for val in param_data]
 
 			avg_data_arr.append(avg_data)
 
 
 		data = [zip(*avg_data_arr)[i] for i in range(len(training_data))]
-
+		
 		maxlen = max(resp_ids)+1
 
 		for i in range(len(resp_ids)):
@@ -160,11 +162,11 @@ class Behave():
 			arr_tuple = tuple(new_arr)
 			resp.append(arr_tuple)
 
-
 		user_data = {
 			"data" : data,
 			"responses" : resp,
-			"min_max" : min_max_values
+			"mean" : param_mean,
+			"stddev": param_stddev
 		}
 
 		return user_data
