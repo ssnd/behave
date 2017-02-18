@@ -1,0 +1,24 @@
+{
+  "name": "Behave",
+  "description": "Client-side user-behaviour recognition.",
+  "version": "0.1",
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "jquery.min.js",
+        "math.min.js",
+        "main.js"
+      ]
+    }
+  ],
+  "permissions": [
+        "storage"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html"
+  }
+}

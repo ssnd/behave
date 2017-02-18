@@ -12,11 +12,17 @@ from pybrain.datasets.supervised import SupervisedDataSet
 from pybrain.tools.shortcuts import buildNetwork
 
 
-hiddenLayers = int(sys.argv[1])
+#hiddenLayers = int(sys.argv[1])
+hiddenLayers = 27
 startRange = 4
 checkingRange = 20
 
-testingGroup = [2, 3, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 22]
+_lrate = 0.0055
+_lrdecay = 1.0
+_momentum = 0
+_weightdecay = 0
+
+testingGroup = [2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23]
 
 #users = models.Collect.query.all()[startRange:startRange+checkingRange]
 
@@ -70,12 +76,12 @@ for index in range(len(normalized_data['responses'])):
 
 	ds.addSample(input, output)
 
-
 # Network Initialization
 
 net = buildNetwork(params_count, hiddenLayers, user_count)
 
-trainer = BackpropTrainer(net, learningrate = 0.001, momentum = 0.99, weightdecay = 0.01)
+
+trainer = BackpropTrainer(net, learningrate = _lrate, momentum = _momentum, weightdecay = _weightdecay, lrdecay = _lrdecay)
 
 # Network Training
 
@@ -106,10 +112,10 @@ for checkingID in range(len(users)):
 	nd = keyboard_test_instance.normalize_data(test_data_to_normalize, _mean, _stddev)
 
 	
-	print "Response: "
+	#print "Response: "
 	response = net.activate(nd)
 
-	print response
+	#print response
 
 	maxResponse = -1
 
@@ -123,7 +129,8 @@ for checkingID in range(len(users)):
 	print "User: ", checkingID
 
 	if maxResponse > 0.5: print "Guessed user: ", result
-	else: print "Guessed user: NONE (", result, ")"
+	else: print "Guessed user: NONE (", result, maxResponse, ")"
 
 	print "------------------------"
 	
+print "LEARNING RATE", _lrate
