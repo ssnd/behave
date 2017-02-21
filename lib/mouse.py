@@ -10,7 +10,9 @@ class Mouse(Behave):
 
 
 		self.right_click_durations	=[]
+		
 		self.left_click_durations	=[]
+
 		self.dbclick_durations		=[]
 
 		self.mouse_move_events = []

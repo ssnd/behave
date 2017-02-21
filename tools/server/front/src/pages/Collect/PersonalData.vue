@@ -1,3 +1,4 @@
+
 <template>
 	<div>
 		<h2 style="text-align:center">Personal Data Collecting</h2>
@@ -6,16 +7,16 @@
 
 		<form @submit.prevent="validateBeforeSubmit">
 			<p class="control">
-			<input name="email" v-model="email" v-validate.initial="email" data-vv-rules="required|email" :class="{'input': true, 'is-danger': errors.has('email') }" type="text" placeholder="Email">
+			<input type="email" name="email" v-model="email"  v-validate="'required|email'" placeholder="Email" :class="{'input': true, 'is-danger' : errors.has('email') }">
 			</p>
 			<p class="control">
-			<input name="name" v-model="name" v-validate.initial="name" data-vv-rules="required" :class="{'input': true, 'is-danger': errors.has('name') }" type="text" placeholder="Name">
+			<input name="name" v-model="name" v-validate="'required'" :class="{'input': true, 'is-danger': errors.has('name') }" type="text" placeholder="Name">
 			</p>
 			<p class="control">
-			<input name="lastname" v-model="lastname" v-validate.initial="lastname" data-vv-rules="required" :class="{'input': true, 'is-danger': errors.has('lastname') }" type="text" placeholder="Lastname">
+			<input name="lastname" v-model="lastname" v-validate="'required'" :class="{'input': true, 'is-danger': errors.has('lastname') }" type="text" placeholder="Lastname">
 			</p>
 			<p class="control">
-			<input name="age" v-model="age" v-validate.initial="age" data-vv-rules="required|numeric" :class="{'input': true, 'is-danger': errors.has('age') }" type="text" placeholder="Age">
+			<input name="age" v-model="age" v-validate="'required|numeric'" :class="{'input': true, 'is-danger': errors.has('age') }" type="text" placeholder="Age">
 			</p>
 			<p class="control">
 				<label class="radio">
@@ -52,12 +53,12 @@ export default {
 	},
 
 	methods : {
-		validateBeforeSubmit() { 
+		validateBeforeSubmit() {
 
 			this.$validator.validateAll().then(success => {
+
 				if (! success) {
-					console.log("Validate");
-					return;
+					console.log(success);
 				}
 				
 				sessionStorage.setItem('email', this.email);
