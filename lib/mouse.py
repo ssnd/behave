@@ -9,16 +9,20 @@ class Mouse(Behave):
 	def __init__(self, data):
 
 
-		self.right_click_durations	=[]
+		self.right_click_durations	= []
 		
-		self.left_click_durations	=[]
+		self.left_click_durations	= []
 
-		self.dbclick_durations		=[]
+		self.dbclick_durations		= []
 
-		self.mouse_move_events = []
+		self.mouse_move_events 		= []
 
 		Behave.__init__(self, data)
-		self.data = ast.literal_eval(data)
+
+		self.data = data
+
+		if (type(data) == str) :
+			self.data = ast.literal_eval(data)
 		
 
 		for chunk in self.data:
@@ -67,33 +71,6 @@ class Mouse(Behave):
 				e=1
 
 		return speed_arr
-
-
-
-	def angles(self):
-
-		angles = []
-		
-		for index, chunk in enumerate(self.mouse_move_events[1:-1]):
-			
-			try:
-				current_position = (chunk['mouseX'],chunk['mouseY'])
-
-				last_chunk = self.mouse_move_events[index]
-
-				last_position = (last_chunk['mouseX'], last_chunk['mouseY'])
-
-				vector_coords=self.vector_coords(current_position, last_position)
-				if 0 not in vector_coords:
-
-					angle = math.atan(vector_coords[1]/vector_coords[0])
-
-					angles.append(angle*57.2958)
-			except:
-				e=1
-
-		return angles
-
 
 
 

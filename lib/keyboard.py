@@ -30,7 +30,10 @@ class Keyboard(Behave):
 		"""
 		Behave.__init__(self, data)
 
-		self.data = ast.literal_eval(data)
+		self.data = data 
+		
+		if (type(data) == str):
+			self.data = ast.literal_eval(data)
 
 		self.timestamps = [keystroke['timestamp'] for keystroke in self.data]
 
@@ -138,9 +141,11 @@ class Keyboard(Behave):
 			releaseToRelease = nextRelease - previousRelease
 			delays.append(releaseToRelease)
 
+		# TODO: fix the filtration based on deviation
 		rtor_deviation = self.standart_deviation(delays)
 
 		delays_filtered = []
+
 
 		for val in delays:
 			if val > -rtor_deviation and val < rtor_deviation:

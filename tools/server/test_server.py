@@ -115,6 +115,12 @@ def shutdown_session(exception=None):
 
 	db.session.remove()
 
+@app.route("/users")
+def users():
+	data = Collect.query.all()
+	cols = ['id', 'dataChunk1','mouseDataChunk1', "name" , "lastname"]
+	result = [{col: getattr(d, col) for col in cols} for d in data]
+	return jsonify(result)
 
 @app.route("/", methods=["GET"])
 # @login_required

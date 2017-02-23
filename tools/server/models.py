@@ -97,3 +97,5 @@ class Collect(db.Model):
 
 	def get_json_data(self, jsonString=None):
 		return ast.literal_eval(jsonString)
+
+	

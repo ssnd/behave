@@ -5,5 +5,6 @@ export default {
   '/register': 'Register',
   '/training': 'Training',
   '/collect': 'Collect/Collect',
-  // '/collect-demo': 'Collect-Demo/Collect'
+  "/db" : "db/db",
+  '/collect-demo': 'Collect-Demo/Collect'
 }

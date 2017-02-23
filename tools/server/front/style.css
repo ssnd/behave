@@ -171,3 +171,57 @@ input{
 	margin: 0 auto;
 	text-align: center;
 }
+
+.charts {
+	display: flex;
+	flex-flow: row wrap;
+}
+.chart-param {
+	margin: 0 25px;
+	width: calc(50% - 50px);
+
+}
+
+.list {
+	display: flex;
+	flex-flow: row wrap;
+	width: 100%;
+}
+
+.right-wrapper {
+	width: 80%;
+}
+
+.flex {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-around;
+}
+
+.left-wrapper {
+	width: 20%;
+}
+
+.flex > div  {
+	max-width: 500px;
+	margin-top: 40px;
+}
+
+li {
+	list-style-type: none;
+	cursor: pointer;
+}
+
+li.active {
+	font-weight: bold;
+}
+
+ul {
+	position: fixed; 
+	position: fixed;
+	max-height: 100vh;
+	overflow: scroll;
+	top: 0;
+	left: 0;
+	width: 20%;
+}
