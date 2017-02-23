@@ -9,6 +9,7 @@
         "<all_urls>"
       ],
       "js": [
+        "md5.min.js",
         "jquery.min.js",
         "math.min.js",
         "main.js"
@@ -20,5 +21,6 @@
   ],
   "browser_action": {
     "default_popup": "popup.html"
-  }
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

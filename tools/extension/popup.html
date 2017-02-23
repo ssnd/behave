@@ -4,6 +4,8 @@
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 		<link rel="stylesheet" href="popup_style.css">
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+		<script src="math.min.js"></script>
+		<script src="md5.min.js"></script>
 		<script src="jquery.min.js"></script>
 		<script src="popup_scr.js"></script>
 	</head>
@@ -19,10 +21,10 @@ work, and Mrs. Dursley gossiped away happily as she wrestled a screaming
 Dudley into his high chair.
 		<textarea id="s-input" type="text" placeholder="Start typing." rows="10" required></textarea><br>
 		</p>-->
-		<input type="password" class="s-input" placeholder="Password 1"><br>
-		<input type="password" class="s-input" placeholder="Password 2"><br>
-		<input type="password" class="s-input" placeholder="Password 3"><br>
-		<input type="password" class="s-input" placeholder="Password 4"><br>
+		<input type="password" id="p1" class="s-input" placeholder="Password 1" required><br>
+		<input type="password" id="p2" class="s-input" placeholder="Password 2" required><br>
+		<input type="password" id="p3" class="s-input" placeholder="Password 3" required><br>
+		<input type="password" id="p4" class="s-input" placeholder="Password 4" required><br>
 		<button id="s-submit">Submit</button>
 	</div>
 	<div id="result"><h1 id="s-header">You've Registered.</h1></div>
