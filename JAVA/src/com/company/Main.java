@@ -15,6 +15,8 @@ public class Main {
     static Map<String, String> releaseQueue = new LinkedHashMap<>();
 
     static ArrayList keyData = new ArrayList();
+    static ArrayList mouseData = new ArrayList();
+
     public static void main(String[] args) {
 
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
@@ -31,13 +33,19 @@ public class Main {
 
             System.exit(1);
         }
+
         GlobalScreen.addNativeKeyListener(new KeyListener());
+
+        MouseListener mouseListenerObject = new MouseListener();
+
+        GlobalScreen.addNativeMouseListener(mouseListenerObject);
+        GlobalScreen.addNativeMouseMotionListener(mouseListenerObject);
     }
 
     public static void triggerPress(String keyCode, String timestamp){
         releaseQueue.put(keyCode, timestamp);
-
     }
+
     public static void triggerRelease(String keyCode, String timestamp){
         Map<String, String> keyEventData = new LinkedHashMap<>();
         keyEventData.put("keyPress", releaseQueue.get(keyCode));
@@ -47,5 +55,21 @@ public class Main {
 
         System.out.println(keyEventData);
 
+    }
+
+    static String mouseReleaseQueue = "";
+
+    public static void triggerMousePress(String timestamp){
+        mouseReleaseQueue = timestamp;
+    }
+
+    public static void triggerMouseRelease(String button, String timestamp){
+        Map<String, String> mouseEventData = new LinkedHashMap<>();
+        mouseEventData.put("mousePress", mouseReleaseQueue);
+        mouseEventData.put("mouseRelease", timestamp);
+        mouseEventData.put("buttonCode", button);
+        mouseData.add(mouseEventData);
+
+        System.out.println(mouseEventData);
     }
 }
