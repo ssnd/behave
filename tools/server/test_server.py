@@ -115,6 +115,17 @@ def shutdown_session(exception=None):
 
 	db.session.remove()
 
+@app.route('/test', methods=["GET", "POST"])
+def test():
+	if request.method=="POST":
+		print request.data
+		print request.form
+		print "post"
+		return jsonify({"some" : "1"})
+	else:
+		print "get"
+		return "0"
+
 @app.route("/users")
 def users():
 	data = Collect.query.all()
