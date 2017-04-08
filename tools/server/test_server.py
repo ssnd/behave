@@ -115,7 +115,7 @@ def shutdown_session(exception=None):
 
 	db.session.remove()
 
-@app.route('/test', methods=["GET", "POST"])
+@app.route('/save_pc_data', methods=["GET", "POST"])
 def test():
 	if request.method=="POST":
 		print request.data

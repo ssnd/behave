@@ -5,7 +5,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
-public class KeyListener  implements NativeKeyListener{
+public class KeyListener  implements NativeKeyListener {
     public void nativeKeyPressed(NativeKeyEvent e) {
         Main.triggerPress(String.valueOf(e.getKeyCode()),
                 Long.valueOf(System.currentTimeMillis()).toString());
@@ -17,6 +17,8 @@ public class KeyListener  implements NativeKeyListener{
             Main.triggerRelease(String.valueOf(e.getKeyCode()), Long.valueOf(System.currentTimeMillis()).toString());
         } catch (UnirestException e1) {
             e1.printStackTrace();
+        } catch (InterruptedException e2) {
+            e2.printStackTrace();
         }
     }
 

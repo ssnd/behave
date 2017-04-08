@@ -11,12 +11,9 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import com.google.gson.Gson;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,15 +24,22 @@ import java.util.logging.Logger;
 public class Main {
     static Map<String, String> releaseQueue = new LinkedHashMap<>();
 
-    static ArrayList keyData = new ArrayList();
+    static ArrayList keyboardData = new ArrayList();
     static ArrayList mouseData = new ArrayList();
+    static ArrayList mouseMoveData = new ArrayList();
 
-    static String url = "http://127.0.0.1:5000/test";
+    static String url = "http://127.0.0.1:5000/save_pc_data";
 
-    public static void main(String[] args) {
+    public static final int SECOND = 1000;
+    public static final String KEYBOARD_TYPE="keyboard";
+    public static final String MOUSE_EVENTS_TYPE="mouse_events";
+    public static final String MOUSE_MOVE_TYPE="mouse_move";
 
 
+    public static Timer timer;
 
+    public static void main(String[] args) throws InterruptedException {
+        timer = new Timer();
 
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
@@ -59,7 +63,55 @@ public class Main {
         GlobalScreen.addNativeMouseListener(mouseListenerObject);
         GlobalScreen.addNativeMouseMotionListener(mouseListenerObject);
 
-        }
+    }
+
+     public static void submitData(ArrayList data, String TYPE) {
+        Gson gson = new Gson();
+        LinkedHashMap<String, String> submitData = new LinkedHashMap<>();
+
+
+        String keyDataJson = gson.toJson(data, ArrayList.class);
+        submitData.put("type", TYPE);
+        submitData.put("data", keyDataJson);
+
+        String submitJsonData = gson.toJson(submitData, LinkedHashMap.class);
+
+        Future<HttpResponse<JsonNode>> future = Unirest.post(url)
+                .header("accept", "application/json")
+                .body(submitJsonData)
+                .asJsonAsync(new Callback<JsonNode>() {
+
+                     public void failed(UnirestException e) {
+
+                     }
+
+                     public void completed(HttpResponse<JsonNode> response) {
+
+                         System.out.println("data successfully submitted to the server");
+
+                     }
+
+                     public void cancelled() {
+
+                     }
+
+                });
+
+     }
+
+
+    public static void rescheduleTimer() {
+        timer.cancel();
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                submitData(keyboardData, KEYBOARD_TYPE);
+            }
+        }, 2*SECOND);
+
+    }
+
+
 
     public static void triggerPress(String keyCode, String timestamp){
         releaseQueue.put(keyCode, timestamp);
@@ -67,53 +119,43 @@ public class Main {
 
 
 
-    public static void triggerRelease(String keyCode, String timestamp) throws UnirestException{
+
+    public static void triggerRelease(String keyCode, String timestamp) throws UnirestException, InterruptedException {
         LinkedHashMap<String, String> keyEventData = new LinkedHashMap<>();
+
         keyEventData.put("keyPress", releaseQueue.get(keyCode));
         keyEventData.put("keyRelease", timestamp);
         keyEventData.put("keyCode", keyCode);
-        keyData.add(keyEventData);
 
+        keyboardData.add(keyEventData);
 
-
-        if (keyData.size() >= 130) {
-            Gson gson = new Gson();
-
-            String keyDataJson = gson.toJson(keyData, ArrayList.class);
-
-
-            Future<HttpResponse<JsonNode>> future = Unirest.post(url)
-                    .header("accept", "application/json")
-                    .body(keyDataJson)
-                    .asJsonAsync(new Callback<JsonNode>() {
-
-                        public void failed(UnirestException e) {
-
-                        }
-
-                        public void completed(HttpResponse<JsonNode> response) {
-                            keyData.clear();
-                        }
-
-                        public void cancelled() {
-
-                        }
-
-                    });
-
-        }
-
-
+        // here the dict reset happens (inside the rescheduleTimer method
+        rescheduleTimer();
 
 
     }
 
     static String mouseReleaseQueue = "";
 
-    public void uploadAndClear()
 
     public static void triggerMousePress(String timestamp){
         mouseReleaseQueue = timestamp;
+    }
+
+    public static void triggerMouseMove(String x, String y, String timestamp) {
+        LinkedHashMap<String, String> mouseMoveEventData = new LinkedHashMap<>();
+
+        mouseMoveEventData.put("x", Integer.valueOf(x).toString() );
+        mouseMoveEventData.put("y", Integer.valueOf(y).toString() );
+        mouseMoveEventData.put("timestamp", timestamp);
+
+        mouseMoveData.add(mouseMoveEventData);
+
+        if (mouseMoveData.size() >= 120) {
+            submitData(mouseMoveData, MOUSE_MOVE_TYPE);
+            mouseMoveData.clear();
+        }
+
     }
 
     public static void triggerMouseRelease(String button, String timestamp){
@@ -124,32 +166,15 @@ public class Main {
         mouseData.add(mouseEventData);
 
 
-        if (mouseData.size() >= 130) {
-            Gson gson = new Gson();
+        if (mouseData.size() >= 200) {
 
-            String keyDataJson = gson.toJson(mouseData, ArrayList.class);
-
-
-            Future<HttpResponse<JsonNode>> future = Unirest.post(url)
-                    .header("accept", "application/json")
-                    .body(keyDataJson)
-                    .asJsonAsync(new Callback<JsonNode>() {
-
-                        public void failed(UnirestException e) {
-
-                        }
-
-                        public void completed(HttpResponse<JsonNode> response) {
-                            mouseData.clear();
-                        }
-
-                        public void cancelled() {
-
-                        }
-
-                    });
+            submitData(mouseData, MOUSE_EVENTS_TYPE);
+            mouseData.clear();
 
         }
+
+
+
 
 
 
