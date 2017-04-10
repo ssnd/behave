@@ -8,34 +8,9 @@ from server import models
 sys.path.append('../../')
 from lib import Behave, Keyboard, Mouse
 
-users = models.Collect.query.all()
 
+keyboard_test_data = [{"keyPress":"1491738639255","keyRelease":"1491738639367","keyCode":"15"},{"keyPress":"1491738639175","keyRelease":"1491738639407","keyCode":"56"},{"keyPress":"1491738656159","keyRelease":"1491738656319","keyCode":"15"},{"keyPress":"1491738656095","keyRelease":"1491738656367","keyCode":"56"},{"keyPress":"1491738668135","keyRelease":"1491738668223","keyCode":"49"},{"keyPress":"1491738668191","keyRelease":"1491738668319","keyCode":"24"},{"keyPress":"1491738668319","keyRelease":"1491738668471","keyCode":"20"},{"keyPress":"1491738668375","keyRelease":"1491738668511","keyCode":"18"},{"keyPress":"1491738668646","keyRelease":"1491738668759","keyCode":"25"},{"keyPress":"1491738668879","keyRelease":"1491738669087","keyCode":"30"},{"keyPress":"1491738668959","keyRelease":"1491738669087","keyCode":"32"},{"keyPress":"1491738669151","keyRelease":"1491738669239","keyCode":"28"},{"keyPress":"1491738669983","keyRelease":"1491738670079","keyCode":"20"},{"keyPress":"1491738669647","keyRelease":"1491738670119","keyCode":"42"},{"keyPress":"1491738670215","keyRelease":"1491738670295","keyCode":"35"},{"keyPress":"1491738670263","keyRelease":"1491738670359","keyCode":"23"},{"keyPress":"1491738670360","keyRelease":"1491738670479","keyCode":"31"},{"keyPress":"1491738670415","keyRelease":"1491738670559","keyCode":"57"},{"keyPress":"1491738670560","keyRelease":"1491738670639","keyCode":"23"},{"keyPress":"1491738670639","keyRelease":"1491738670807","keyCode":"31"},{"keyPress":"1491738670719","keyRelease":"1491738670847","keyCode":"57"},{"keyPress":"1491738670919","keyRelease":"1491738671079","keyCode":"30"},{"keyPress":"1491738671103","keyRelease":"1491738671207","keyCode":"57"},{"keyPress":"1491738671208","keyRelease":"1491738671391","keyCode":"31"},{"keyPress":"1491738671295","keyRelease":"1491738671447","keyCode":"30"},{"keyPress":"1491738671423","keyRelease":"1491738671471","keyCode":"50"},{"keyPress":"1491738671447","keyRelease":"1491738671599","keyCode":"25"},{"keyPress":"1491738671551","keyRelease":"1491738671703","keyCode":"38"},{"keyPress":"1491738671663","keyRelease":"1491738671799","keyCode":"18"},{"keyPress":"1491738671743","keyRelease":"1491738671935","keyCode":"57"},{"keyPress":"1491738671903","keyRelease":"1491738672015","keyCode":"20"},{"keyPress":"1491738671959","keyRelease":"1491738672055","keyCode":"18"},{"keyPress":"1491738672199","keyRelease":"1491738672375","keyCode":"45"},{"keyPress":"1491738672343","keyRelease":"1491738672535","keyCode":"20"},{"keyPress":"1491738672487","keyRelease":"1491738672623","keyCode":"57"},{"keyPress":"1491738672799","keyRelease":"1491738672839","keyCode":"35"},{"keyPress":"1491738673071","keyRelease":"1491738673167","keyCode":"20"},{"keyPress":"1491738673319","keyRelease":"1491738673423","keyCode":"30"},{"keyPress":"1491738673424","keyRelease":"1491738673535","keyCode":"20"},{"keyPress":"1491738673615","keyRelease":"1491738673719","keyCode":"57"},{"keyPress":"1491738673951","keyRelease":"1491738674055","keyCode":"23"},{"keyPress":"1491738674023","keyRelease":"1491738674143","keyCode":"50"},{"keyPress":"1491738674143","keyRelease":"1491738674223","keyCode":"57"},{"keyPress":"1491738674319","keyRelease":"1491738674431","keyCode":"20"},{"keyPress":"1491738674543","keyRelease":"1491738674599","keyCode":"21"},{"keyPress":"1491738674807","keyRelease":"1491738674959","keyCode":"25"},{"keyPress":"1491738674959","keyRelease":"1491738675055","keyCode":"23"},{"keyPress":"1491738675015","keyRelease":"1491738675127","keyCode":"49"},{"keyPress":"1491738675111","keyRelease":"1491738675319","keyCode":"34"},{"keyPress":"1491738675271","keyRelease":"1491738675439","keyCode":"57"},{"keyPress":"1491738675831","keyRelease":"1491738675927","keyCode":"31"},{"keyPress":"1491738675735","keyRelease":"1491738675943","keyCode":"32"},{"keyPress":"1491738675639","keyRelease":"1491738675959","keyCode":"30"},{"keyPress":"1491738675887","keyRelease":"1491738676055","keyCode":"37"},{"keyPress":"1491738675967","keyRelease":"1491738676159","keyCode":"36"},{"keyPress":"1491738676079","keyRelease":"1491738676223","keyCode":"35"},{"keyPress":"1491738676463","keyRelease":"1491738676671","keyCode":"57"},{"keyPress":"1491738676671","keyRelease":"1491738676847","keyCode":"31"},{"keyPress":"1491738677183","keyRelease":"1491738677359","keyCode":"25"},{"keyPress":"1491738677222","keyRelease":"1491738677383","keyCode":"38"},{"keyPress":"1491738677415","keyRelease":"1491738677527","keyCode":"18"},{"keyPress":"1491738677711","keyRelease":"1491738677758","keyCode":"31"},{"keyPress":"1491738677671","keyRelease":"1491738677823","keyCode":"30"},{"keyPress":"1491738678183","keyRelease":"1491738678423","keyCode":"18"},{"keyPress":"1491738678327","keyRelease":"1491738678494","keyCode":"57"},{"keyPress":"1491738679047","keyRelease":"1491738679119","keyCode":"37"},{"keyPress":"1491738679246","keyRelease":"1491738679334","keyCode":"23"},{"keyPress":"1491738679295","keyRelease":"1491738679479","keyCode":"38"},{"keyPress":"1491738679526","keyRelease":"1491738679719","keyCode":"57"},{"keyPress":"1491738681391","keyRelease":"1491738681551","keyCode":"15"},{"keyPress":"1491738681383","keyRelease":"1491738681607","keyCode":"56"},{"keyPress":"1491738682007","keyRelease":"1491738682103","keyCode":"15"},{"keyPress":"1491738681983","keyRelease":"1491738682335","keyCode":"56"},{"keyPress":"1491738682215","keyRelease":"1491738682335","keyCode":"15"}]
 
-"""
+keyboard_test_instance = Keyboard(data=keyboard_test_data)
 
-RANGE - 4 - 24
-
-25
-
-2, 3, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 22
-"""
-userID = int(sys.argv[1])
-
-user = users[userID]
-
-keyChunks 	= [user.dataChunk1, user.dataChunk2, user.dataChunk3, user.dataChunk4]
-
-paramsDict = defaultdict(list)
-
-for keyboard_test_data in keyChunks:
-
-	keyboard_test_instance = Keyboard(data=keyboard_test_data)
-
-	test_data_to_normalize = keyboard_test_instance.get_keyboard_params()
-
-	for key in test_data_to_normalize: paramsDict[key].append(test_data_to_normalize[key])
-
-for i in paramsDict:
-	print "PARAMETER:", i
-	for j in paramsDict[i]: print j
-	print "-----"
+print keyboard_test_instance.release_to_release()
