@@ -35,34 +35,11 @@ class Keyboard(Behave):
 		if (type(data) == str):
 			self.data = ast.literal_eval(data)
 
-		self.timestamps = [keystroke['timestamp'] for keystroke in self.data]
+		self.key_press_arr = [int(keystroke['keyPress']) for keystroke in self.data]
 
-		self.durations = [keystroke['key_duration'] for keystroke in self.data]
+		self.key_release_arr = [int(keystroke['keyRelease']) for keystroke in self.data]
 
-		self.keycodes = [keystroke['keycode'] for keystroke in self.data]
-
-
-	def keystroke_rates(self):
-		"""Returns an array representing the typing rate (per second) for each keypress
-		
-		Returns:
-			TYPE: Array
-		"""
-
-		keystroke_rates_arr = []
-
-		for index, timestamp in enumerate(self.timestamps[1:]):
-
-			time_delta = self.timestamps[index+1] - self.timestamps[index]
-
-			time_delta_seconds = time_delta / 100.0
-
-			if time_delta_seconds > 0.1:
-				keystrokes_per_second = 1 / time_delta_seconds
-
-				keystroke_rates_arr.append(keystrokes_per_second)
-
-		return keystroke_rates_arr
+		self.key_code_arr = [int(keystroke['keyCode']) for keystroke in self.data]
 
 	def dwell_time(self):
 		"""Return an array of keypress durations
@@ -71,11 +48,7 @@ class Keyboard(Behave):
 			TYPE: Array
 		"""
 
-		press_durations_arr = []
-
-		# ...
-
-		press_durations_arr = self.durations
+		press_durations_arr = [self.key_release_arr[i] - self.key_press_arr[i] for i in range(len(self.key_press_arr))]
 
 		return press_durations_arr
 
@@ -85,23 +58,15 @@ class Keyboard(Behave):
 		Returns:
 			Array: Array of delays.
 		"""
-		delays = []
+		flight_time_arr = []
 
-		for i in range(1, len(self.timestamps) - 1):
-			previousRelease = self.timestamps[i]
-			nextPress = self.timestamps[i+1] - self.durations[i+1]
-			flightTime = nextPress - previousRelease
-			delays.append(flightTime)
+		for i in range(1, len(self.key_press_arr) - 1):
+			previous_release = self.key_release_arr[i]
+			next_press = self.key_press_arr[i+1]
+			flight_time = next_press - previous_release
+			flight_time_arr.append(flight_time)
 
-		flight_deviation = self.standart_deviation(delays)
-
-		delays_filtered = []
-
-		for val in delays:
-			if val > -flight_deviation and val < flight_deviation:
-				delays_filtered.append(val)
-
-		return {"_word": [i for i in delays if i not in delays_filtered], "_letter": delays_filtered}
+		return flight_time_arr
 
 	def press_to_press(self):
 		"""Return an array of delays between keypresses.
@@ -109,23 +74,15 @@ class Keyboard(Behave):
 		Returns:
 			Array: Array of delays.
 		"""
-		delays = []
+		press_to_press_arr = []
 
-		for i in range(1, len(self.timestamps) - 1):
-			previousPress = self.timestamps[i] - self.durations[i]
-			nextPress = self.timestamps[i+1] - self.durations[i+1]
-			pressToPress = nextPress - previousPress
-			delays.append(pressToPress)
+		for i in range(1, len(self.key_press_arr) - 1):
+			previous_press = self.key_press_arr[i]
+			next_press = self.key_press_arr[i+1]
+			press_to_press = next_press - previous_press
+			press_to_press_arr.append(press_to_press)
 
-		ptop_deviation = self.standart_deviation(delays)
-
-		delays_filtered = []
-
-		for val in delays:
-			if val > -ptop_deviation and val < ptop_deviation:
-				delays_filtered.append(val)
-
-		return {"_word": [i for i in delays if i not in delays_filtered], "_letter": delays_filtered}
+		return press_to_press_arr
 
 	def release_to_release(self):
 		"""Return an array of delays between key releases.
@@ -133,25 +90,15 @@ class Keyboard(Behave):
 		Returns:
 			Array: Array of delays.
 		"""
-		delays = []
+		release_to_release_arr = []
 
-		for i in range(1, len(self.timestamps) - 1):
-			previousRelease = self.timestamps[i] 
-			nextRelease = self.timestamps[i+1]
-			releaseToRelease = nextRelease - previousRelease
-			delays.append(releaseToRelease)
+		for i in range(1, len(self.key_press_arr) - 1):
+			previous_release = self.key_release_arr[i]
+			next_release = self.key_release_arr[i+1]
+			release_to_release = next_release - previous_release
+			release_to_release_arr.append(release_to_release)
 
-		# TODO: fix the filtration based on deviation
-		rtor_deviation = self.standart_deviation(delays)
-
-		delays_filtered = []
-
-
-		for val in delays:
-			if val > -rtor_deviation and val < rtor_deviation:
-				delays_filtered.append(val)
-
-		return {"_word": [i for i in delays if i not in delays_filtered], "_letter": delays_filtered}
+		return release_to_release_arr
 
 	def get_keyboard_params(self):
 		"""
@@ -161,31 +108,3 @@ class Keyboard(Behave):
 		val_arr = {}
 
 		# val_arr['flight_word_avg'] = self.average(self.flight_time()["_word"])
-
-		# val_arr['flight_word_deviation'] = self.standart_deviation(self.flight_time()["_word"])
-
-		# val_arr['pressToPress_word_avg'] = self.average(self.press_to_press()["_word"])
-
-		#val_arr['pressToPress_word_deviation'] = self.standart_deviation(self.press_to_press()["_word"])
-
-		#val_arr['releaseToRelease_word_avg'] = self.average(self.release_to_release()["_word"])
-
-		#val_arr['releaseToRelease_word_deviation'] = self.standart_deviation(self.release_to_release()["_word"])
-
-		val_arr['flight_letter_avg'] = self.average(self.flight_time()["_letter"])
-
-		val_arr['flight_letter_deviation'] = self.standart_deviation(self.flight_time()["_letter"])
-
-		val_arr['pressToPress_letter_avg'] = self.average(self.press_to_press()["_letter"])
-
-		val_arr['pressToPress_letter_deviation'] = self.standart_deviation(self.press_to_press()["_letter"])
-
-		val_arr['releaseToRelease_letter_avg'] = self.average(self.release_to_release()["_letter"])
-
-		val_arr['releaseToRelease_letter_deviation'] = self.standart_deviation(self.release_to_release()["_letter"])
-
-		val_arr['dwell_avg'] = self.average(self.dwell_time())
-
-		val_arr['dwell_deviation'] = self.standart_deviation(self.dwell_time())
-
-		return val_arr
