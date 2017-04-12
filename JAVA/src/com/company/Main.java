@@ -1,19 +1,26 @@
 package com.company;
 
-import com.mashape.unirest.http.HttpResponse;
 
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
 
-import com.mashape.unirest.http.async.Callback;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import com.rethinkdb.RethinkDB;
+import com.rethinkdb.gen.exc.ReqlError;
+import com.rethinkdb.gen.exc.ReqlQueryLogicError;
+import com.rethinkdb.model.MapObject;
+import com.rethinkdb.net.Connection;
+
+
+
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
-import com.google.gson.Gson;
 
+
+
+import java.awt.datatransfer.*;
+import java.io.IOException;
 import java.util.*;
 
-import java.util.concurrent.*;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,23 +35,40 @@ public class Main {
     static ArrayList mouseData = new ArrayList();
     static ArrayList mouseMoveData = new ArrayList();
 
-    static String url = "http://127.0.0.1:5000/save_pc_data";
+
+    public static int ID;
+
 
     public static final int SECOND = 1000;
-    public static final String KEYBOARD_TYPE="keyboard";
-    public static final String MOUSE_EVENTS_TYPE="mouse_events";
-    public static final String MOUSE_MOVE_TYPE="mouse_move";
+
+    public static Timer keyboardTimer;
+    public static Timer mouseMoveTimer;
+
+    public static String user_id;
 
 
-    public static Timer timer;
+    public static  final RethinkDB r = RethinkDB.r;
 
-    public static void main(String[] args) throws InterruptedException {
-        timer = new Timer();
+    private static Connection conn = r.connection().hostname("localhost").connect();
+
+
+    public static void main(String[] args) throws InterruptedException, UnsupportedFlavorException, IOException {
+        keyboardTimer = new Timer();
+        mouseMoveTimer = new Timer();
+
 
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
 
         System.out.println("Initialized");
+
+
+
+        HashMap<String, ArrayList> new_user = r.table("users").insert(r.hashMap()).run(conn);
+
+        user_id = new_user.get("generated_keys").get(0).toString();
+
+
 
         try {
             GlobalScreen.registerNativeHook();
@@ -65,47 +89,89 @@ public class Main {
 
     }
 
-     public static void submitData(ArrayList data, String TYPE) {
-        Gson gson = new Gson();
-        LinkedHashMap<String, String> submitData = new LinkedHashMap<>();
+     public static void submitKeyboardData(ArrayList data) {
+        HashMap<String, ArrayList> new_group = r.table("keypressGroups")
+                                                .insert(r.hashMap())
+                                                .run(conn);
 
 
-        String keyDataJson = gson.toJson(data, ArrayList.class);
-        submitData.put("type", TYPE);
-        submitData.put("data", keyDataJson);
+        String new_group_id = new_group.get("generated_keys").get(0).toString();
 
-        String submitJsonData = gson.toJson(submitData, LinkedHashMap.class);
 
-        Future<HttpResponse<JsonNode>> future = Unirest.post(url)
-                .header("accept", "application/json")
-                .body(submitJsonData)
-                .asJsonAsync(new Callback<JsonNode>() {
+        for (int i=0; i<data.size(); i++) {
+            Map<String, String> map = (Map<String, String>) data.get(i);
 
-                     public void failed(UnirestException e) {
+            map.put("keypressGroup_id", new_group_id);
+            map.put("user_id", user_id);
 
-                     }
+            data.set(i, map);
+        }
 
-                     public void completed(HttpResponse<JsonNode> response) {
 
-                         System.out.println("data successfully submitted to the server");
-
-                     }
-
-                     public void cancelled() {
-
-                     }
-
-                });
+        r.table("keypresses").insert(data).run(conn);
 
      }
 
 
-    public static void rescheduleTimer() {
-        timer.cancel();
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
+     public static void submitMouseMoveData(ArrayList data) {
+          HashMap<String, ArrayList>  new_group = r.table("mouseMoveGroups")
+                                                 .insert(r.hashMap())
+                                                 .run(conn);
+
+          String new_group_id = new_group.get("generated_keys").get(0).toString();
+
+          for (int i = 0; i < data.size(); i++) {
+              Map<String, String> map = (Map<String, String>) data.get(i);
+
+              map.put("mouseMoveGroup_id", new_group_id);
+              map.put("user_id", user_id);
+
+              data.set(i, map);
+
+          }
+
+          r.table("mouseMoves").insert(data).run(conn);
+
+     }
+
+     public static void submitMouseData(ArrayList data) {
+
+        for (int i = 0; i < data.size(); i++) {
+            Map<String, String> map = (Map<String, String>) data.get(i);
+
+            map.put("user_id", user_id);
+
+            data.set(i, map);
+
+        }
+
+        r.table("mouseEvents").insert(data).run(conn);
+
+    }
+
+
+    public static void rescheduleMouseMoveTimer() {
+        mouseMoveTimer.cancel();
+        mouseMoveTimer = new Timer();
+        mouseMoveTimer.schedule(new TimerTask() {
             public void run() {
-                submitData(keyboardData, KEYBOARD_TYPE);
+
+                    System.out.println("sending mouse move data to the server");
+                    submitMouseMoveData(mouseMoveData);
+
+
+            }
+        }, 1*SECOND);
+    }
+
+
+    public static void rescheduleKeyboardTimer() {
+        keyboardTimer.cancel();
+        keyboardTimer = new Timer();
+        keyboardTimer.schedule(new TimerTask() {
+            public void run() {
+                System.out.println("sending typing data to the server");
+                submitKeyboardData(keyboardData);
             }
         }, 2*SECOND);
 
@@ -120,7 +186,7 @@ public class Main {
 
 
 
-    public static void triggerRelease(String keyCode, String timestamp) throws UnirestException, InterruptedException {
+    public static void triggerRelease(String keyCode, String timestamp) throws InterruptedException {
         LinkedHashMap<String, String> keyEventData = new LinkedHashMap<>();
 
         keyEventData.put("keyPress", releaseQueue.get(keyCode));
@@ -129,8 +195,11 @@ public class Main {
 
         keyboardData.add(keyEventData);
 
+
+
         // here the dict reset happens (inside the rescheduleTimer method
-        rescheduleTimer();
+        rescheduleKeyboardTimer();
+
 
 
     }
@@ -151,10 +220,8 @@ public class Main {
 
         mouseMoveData.add(mouseMoveEventData);
 
-        if (mouseMoveData.size() >= 120) {
-            submitData(mouseMoveData, MOUSE_MOVE_TYPE);
-            mouseMoveData.clear();
-        }
+        rescheduleMouseMoveTimer();
+
 
     }
 
@@ -166,15 +233,11 @@ public class Main {
         mouseData.add(mouseEventData);
 
 
-        if (mouseData.size() >= 200) {
+        if (mouseData.size() >= 4) {
+            submitMouseData(mouseData);
 
-            submitData(mouseData, MOUSE_EVENTS_TYPE);
             mouseData.clear();
-
         }
-
-
-
 
 
 

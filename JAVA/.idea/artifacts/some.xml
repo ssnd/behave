@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="some">
+    <output-path>$PROJECT_DIR$/out/artifacts/some</output-path>
+    <root id="archive" name="some.jar">
+      <element id="module-output" name="JAVA" />
+      <element id="library" level="project" name="jnativehook-2.1.0" />
+      <element id="library" level="project" name="gson-2.2.4" />
+      <element id="library" level="project" name="com.rethinkdb:rethinkdb-driver:2.3.3" />
+      <element id="library" level="project" name="com.mashape.unirest:unirest-java:1.4.9" />
+    </root>
+  </artifact>
+</component>

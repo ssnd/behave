@@ -15,8 +15,6 @@ public class KeyListener  implements NativeKeyListener {
     public void nativeKeyReleased(NativeKeyEvent e) {
         try {
             Main.triggerRelease(String.valueOf(e.getKeyCode()), Long.valueOf(System.currentTimeMillis()).toString());
-        } catch (UnirestException e1) {
-            e1.printStackTrace();
         } catch (InterruptedException e2) {
             e2.printStackTrace();
         }

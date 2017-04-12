@@ -11,5 +11,6 @@
     <orderEntry type="library" name="jnativehook-2.1.0" level="project" />
     <orderEntry type="library" name="gson-2.2.4" level="project" />
     <orderEntry type="library" name="com.mashape.unirest:unirest-java:1.4.9" level="project" />
+    <orderEntry type="library" name="com.rethinkdb:rethinkdb-driver:2.3.3" level="project" />
   </component>
 </module>
