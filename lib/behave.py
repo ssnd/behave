@@ -46,8 +46,7 @@ class Behave():
 		Returns:
 			Array: Calculated average
 		"""
-
-		return sum(arr)/len(arr)
+		return sum(arr) / len(arr)
 
 	@staticmethod
 	def standart_deviation(arr):
@@ -59,10 +58,9 @@ class Behave():
 		Returns:
 			Number: Calculated deviation
 		"""
-
 		length = len(arr)
 
-		average = sum(arr)/length
+		average = sum(arr) / length
 
 		deviations = [(i-average)**2 for i in arr]
 

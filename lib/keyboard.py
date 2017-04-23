@@ -35,11 +35,28 @@ class Keyboard(Behave):
 		if (type(data) == str):
 			self.data = ast.literal_eval(data)
 
-		self.key_press_arr = [int(keystroke['keyPress']) for keystroke in self.data]
+		self.key_press_arr = []
+		self.key_release_arr = []
+		self.key_code_arr = []
 
-		self.key_release_arr = [int(keystroke['keyRelease']) for keystroke in self.data]
+		for keystroke in self.data:
+			if keystroke["keyPress"] != None and keystroke["keyRelease"] != None and keystroke["keyCode"] != None:
+				self.key_press_arr.append(int(keystroke["keyPress"]))
+				self.key_release_arr.append(int(keystroke["keyRelease"]))
+				self.key_code_arr.append(int(keystroke["keyCode"]))
 
-		self.key_code_arr = [int(keystroke['keyCode']) for keystroke in self.data]
+	def keyboard_filter(self, unfiltered_arr):
+
+		filter_val = self.standart_deviation(unfiltered_arr) / 2
+		if filter_val > 2000:
+			filter_val = 2000
+
+		filtered_arr = [k for k in unfiltered_arr if k > -filter_val and k < filter_val]
+
+		if(len(filtered_arr) == 0):
+			filtered_arr.append(0)
+
+		return filtered_arr
 
 	def dwell_time(self):
 		"""Return an array of keypress durations
@@ -107,4 +124,14 @@ class Keyboard(Behave):
 
 		val_arr = {}
 
-		# val_arr['flight_word_avg'] = self.average(self.flight_time()["_word"])
+		val_arr['dwell_time_average'] = self.average(self.dwell_time())
+		val_arr['flight_time_average'] = self.average(self.keyboard_filter(self.flight_time()))
+		val_arr['rtor_time_average'] = self.average(self.keyboard_filter(self.release_to_release()))
+		val_arr['ptop_time_average'] = self.average(self.keyboard_filter(self.press_to_press()))
+
+		#val_arr['dwell_time_std'] = self.standart_deviation(self.dwell_time())
+		#val_arr['flight_time_std'] = self.standart_deviation(self.flight_time())
+		#val_arr['rtor_time_std'] = self.standart_deviation(self.release_to_release())
+		#val_arr['ptop_time_std'] = self.standart_deviation(self.press_to_press())
+
+		return val_arr

