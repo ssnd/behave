@@ -77,7 +77,7 @@ class Keyboard(Behave):
 		"""
 		flight_time_arr = []
 
-		for i in range(1, len(self.key_press_arr) - 1):
+		for i in range(0, len(self.key_press_arr) - 1):
 			previous_release = self.key_release_arr[i]
 			next_press = self.key_press_arr[i+1]
 			flight_time = next_press - previous_release
@@ -93,7 +93,7 @@ class Keyboard(Behave):
 		"""
 		press_to_press_arr = []
 
-		for i in range(1, len(self.key_press_arr) - 1):
+		for i in range(0, len(self.key_press_arr) - 1):
 			previous_press = self.key_press_arr[i]
 			next_press = self.key_press_arr[i+1]
 			press_to_press = next_press - previous_press
@@ -109,7 +109,7 @@ class Keyboard(Behave):
 		"""
 		release_to_release_arr = []
 
-		for i in range(1, len(self.key_press_arr) - 1):
+		for i in range(0, len(self.key_press_arr) - 1):
 			previous_release = self.key_release_arr[i]
 			next_release = self.key_release_arr[i+1]
 			release_to_release = next_release - previous_release
@@ -125,9 +125,9 @@ class Keyboard(Behave):
 		val_arr = {}
 
 		val_arr['dwell_time_average'] = self.average(self.dwell_time())
-		val_arr['flight_time_average'] = self.average(self.keyboard_filter(self.flight_time()))
-		val_arr['rtor_time_average'] = self.average(self.keyboard_filter(self.release_to_release()))
-		val_arr['ptop_time_average'] = self.average(self.keyboard_filter(self.press_to_press()))
+		val_arr['flight_time_average'] = self.average(self.flight_time())
+		val_arr['rtor_time_average'] = self.average(self.release_to_release())
+		val_arr['ptop_time_average'] = self.average(self.press_to_press())
 
 		#val_arr['dwell_time_std'] = self.standart_deviation(self.dwell_time())
 		#val_arr['flight_time_std'] = self.standart_deviation(self.flight_time())

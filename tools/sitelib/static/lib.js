@@ -49,11 +49,13 @@
 		
 
 		$registerFormInputs.keydown(function(event) {
+			var timestamp = (new Date).getTime();
 			var id = "pass" + $(event.target).attr('data-passid');
+
 
 			// todo: review needed
 			if (event.key.length == 1) 
-				keypressQueue[event.keyCode] = event.timeStamp;
+				keypressQueue[event.keyCode] = timestamp;
 
 
 			if (event.key.toLowerCase() == "backspace") {
@@ -65,6 +67,7 @@
 		});
 
 		$registerFormInputs.keyup(function(event) {
+			var timestamp = (new Date).getTime();
 			var id = "pass" + $(event.target).attr('data-passid');
 
 			console.log(passwords)
@@ -74,7 +77,7 @@
 
 				var obj = {
 					keyPress : keypressQueue[event.keyCode],
-					keyRelease : event.timeStamp,
+					keyRelease : timestamp,
 					keyCode : event.keyCode,
 
 				}
