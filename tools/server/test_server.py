@@ -1,15 +1,6 @@
 from flask import request, render_template, redirect, jsonify
 from server import db, app, login_manager
-
-from models import 	User, \
-					DataChunk, \
-					Collect,\
-					ResearchUser,\
-					KeypressGroup,\
-					Keypress, \
-					MouseMove, \
-					MouseMoveGroup
-
+from models import User, DataChunk, Collect
 from flask_login import login_user, logout_user, current_user, login_required
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.datasets.supervised import SupervisedDataSet
@@ -18,7 +9,6 @@ import hashlib
 import os, sys
 from blinker import signal
 import json
-import ast
 import base64
 
 # todo: fix
@@ -125,91 +115,16 @@ def shutdown_session(exception=None):
 
 	db.session.remove()
 
-@app.route('/save_pc_data', methods=["GET", "POST"])
+@app.route('/test', methods=["GET", "POST"])
 def test():
 	if request.method=="POST":
-		data = request.data
-		data = ast.literal_eval(data)
-
-
-		user = data['user_id']
-
-		data_type = data['type']
-
-		events = data['data']
-
-		events = ast.literal_eval(data['data'])
-
-		if data_type=="keyboard":
-
-			keypress_group = KeypressGroup()
-
-			db.session.add(keypress_group)
-
-			db.session.commit()
-
-			for keypress in events:
-				press = Keypress()
-
-				press.press_timestamp = keypress['keyPress']
-
-				press.release_timestamp = keypress['keyRelease']
-
-				press.keycode = keypress['keyCode']
-
-				press.user_id = user
-
-				press.group_id = keypress_group.id
-
-				db.session.add(press)
-
-				db.session.commit()
-
-		if data_type=="mouse_move":
-
-			mouse_move_group = MouseMoveGroup()
-
-			db.session.add(mouse_move_group)
-
-			db.session.commit()
-
-			for mouse_move in events:
-
-				move = MouseMove()
-
-				move.y = mouse_move['y']
-
-				move.x = mouse_move['x']
-
-				move.timestamp = mouse_move['timestamp']
-
-				move.user_id = user
-
-				move.group_id = mouse_move_group.id
-
-				db.session.add(move)
-
-				db.session.commit()
-
-
-		return "ok"
-
-
-
-		
-
-	if request.method=="GET":
-		u = ResearchUser()
-
-		db.session.add(u)
-		db.session.commit()
-
-		return jsonify({
-			"response": "research user created successfully",
-			"id": u.id,
-			})
-		
-	
+		print request.data
+		print request.form
+		print "post"
+		return jsonify({"some" : "1"})
+	else:
+		print "get"
+		return "0"
 
 @app.route("/users")
 def users():

@@ -5,18 +5,20 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
-public class KeyListener  implements NativeKeyListener {
+public class KeyListener  implements NativeKeyListener{
     public void nativeKeyPressed(NativeKeyEvent e) {
-        Main.triggerPress(String.valueOf(e.getKeyCode()),
+        Main.triggerPress(String.valueOf(e.getKeyText(e.getKeyCode())),
                 Long.valueOf(System.currentTimeMillis()).toString());
     }
 
 
     public void nativeKeyReleased(NativeKeyEvent e) {
         try {
-            Main.triggerRelease(String.valueOf(e.getKeyCode()), Long.valueOf(System.currentTimeMillis()).toString());
-        } catch (InterruptedException e2) {
-            e2.printStackTrace();
+            //if (e.getKeyText(e.getKeyCode()).length() == 1) {
+                Main.triggerRelease(String.valueOf(e.getKeyText(e.getKeyCode())), Long.valueOf(System.currentTimeMillis()).toString());
+            //}
+        } catch (UnirestException e1) {
+            e1.printStackTrace();
         }
     }
 

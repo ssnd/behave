@@ -30,7 +30,25 @@ class Keyboard(Behave):
 		"""
 		Behave.__init__(self, data)
 
-		self.data = data 
+		self.data = data
+		
+		if (type(data) == str):
+			self.data = ast.literal_eval(data)
+
+		self._data = data
+
+		self.key_press_arr = []
+		self.key_release_arr = []
+		self.key_code_arr = []
+
+		for keystroke in self.data:
+			if keystroke["keyPress"] != None and keystroke["keyRelease"] != None and keystroke["keyCode"] != None:
+				self.key_press_arr.append(int(keystroke["keyPress"]))
+				self.key_release_arr.append(int(keystroke["keyRelease"]))
+				self.key_code_arr.append(str(keystroke["keyCode"]))
+
+	def reinit(self, data):
+		self.data = data
 		
 		if (type(data) == str):
 			self.data = ast.literal_eval(data)
@@ -43,13 +61,13 @@ class Keyboard(Behave):
 			if keystroke["keyPress"] != None and keystroke["keyRelease"] != None and keystroke["keyCode"] != None:
 				self.key_press_arr.append(int(keystroke["keyPress"]))
 				self.key_release_arr.append(int(keystroke["keyRelease"]))
-				self.key_code_arr.append(int(keystroke["keyCode"]))
+				self.key_code_arr.append(str(keystroke["keyCode"]))
 
 	def keyboard_filter(self, unfiltered_arr):
 
 		filter_val = self.standart_deviation(unfiltered_arr) / 2
-		if filter_val > 2000:
-			filter_val = 2000
+		if filter_val > 600:
+			filter_val = 600
 
 		filtered_arr = [k for k in unfiltered_arr if k > -filter_val and k < filter_val]
 
@@ -57,6 +75,18 @@ class Keyboard(Behave):
 			filtered_arr.append(0)
 
 		return filtered_arr
+
+	def letter_filter(self):
+
+		unfiltered_arr = self._data
+
+		self.reinit([k for k in unfiltered_arr if len(k["keyCode"])==1])
+
+	def keyname_filter(self, keyname_str):
+
+		unfiltered_arr = self._data
+
+		self.reinit([k for k in unfiltered_arr if k["keyCode"]==keyname_str])
 
 	def dwell_time(self):
 		"""Return an array of keypress durations
@@ -124,10 +154,16 @@ class Keyboard(Behave):
 
 		val_arr = {}
 
+		self.letter_filter()
+
 		val_arr['dwell_time_average'] = self.average(self.dwell_time())
 		val_arr['flight_time_average'] = self.average(self.flight_time())
 		val_arr['rtor_time_average'] = self.average(self.release_to_release())
 		val_arr['ptop_time_average'] = self.average(self.press_to_press())
+
+		self.keyname_filter("Space")
+
+		val_arr['space_dwell_time_average'] = self.average(self.dwell_time())
 
 		#val_arr['dwell_time_std'] = self.standart_deviation(self.dwell_time())
 		#val_arr['flight_time_std'] = self.standart_deviation(self.flight_time())

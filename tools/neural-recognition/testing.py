@@ -1,63 +1,12 @@
-"""
-
-{
-"id":  "000983a4-5f15-4084-b79b-2daaa6d8615c" ,
-"keyCode":  "28" ,
-"keyPress":  "1492147908036" ,
-"keyRelease":  "1492147908155" ,
-"keypressGroup_id":  "cbf1bd50-b784-4649-b340-b51aa0b5f53f" ,
-"user_id":  "7d40aeba-b7c3-41df-b610-c575b6f88426"
-}
-
-keypressGroups -> {
-"id":  "15a83f54-ca97-4ae0-ae96-34d80f99e9fb"
-}
-
-"""
-
-
 import sys
 
 from collections import defaultdict
-sys.path.append('../')
-
-import rethinkdb as r
-
-import operator
 
 sys.path.append('../../')
 from lib import Behave, Keyboard, Mouse
 
-r.connect("localhost", 28015).repl()
+a = [{"keyPress":"1493475694264","keyRelease":"1493475694416","keyCode":"Left Shift"},{"keyPress":"1493475694282","keyRelease":"1493475694417","keyCode":"M"},{"keyPress":"1493475694559","keyRelease":"1493475694668","keyCode":"R"},{"keyPress":"1493475694620","keyRelease":"1493475694778","keyCode":"S"},{"keyPress":"1493475694796","keyRelease":"1493475694931","keyCode":"Period"},{"keyPress":"1493475695059","keyRelease":"1493475695153","keyCode":"Space"},{"keyPress":"1493475695195","keyRelease":"1493475695457","keyCode":"Left Shift"},{"keyPress":"1493475695356","keyRelease":"1493475695474","keyCode":"D"},{"keyPress":"1493475695514","keyRelease":"1493475695624","keyCode":"U"},{"keyPress":"1493475695624","keyRelease":"1493475695718","keyCode":"R"},{"keyPress":"1493475695748","keyRelease":"1493475695877","keyCode":"S"},{"keyPress":"1493475695877","keyRelease":"1493475695963","keyCode":"L"},{"keyPress":"1493475695963","keyRelease":"1493475696072","keyCode":"E"},{"keyPress":"1493475696072","keyRelease":"1493475696174","keyCode":"Y"},{"keyPress":"1493475696173","keyRelease":"1493475696278","keyCode":"Space"},{"keyPress":"1493475696322","keyRelease":"1493475696423","keyCode":"W"},{"keyPress":"1493475696392","keyRelease":"1493475696542","keyCode":"A"},{"keyPress":"1493475696541","keyRelease":"1493475696620","keyCode":"S"},{"keyPress":"1493475696619","keyRelease":"1493475696718","keyCode":"Space"},{"keyPress":"1493475696746","keyRelease":"1493475696857","keyCode":"T"},{"keyPress":"1493475696889","keyRelease":"1493475696983","keyCode":"H"},{"keyPress":"1493475696983","keyRelease":"1493475697062","keyCode":"I"},{"keyPress":"1493475697109","keyRelease":"1493475697211","keyCode":"N"},{"keyPress":"1493475697228","keyRelease":"1493475697347","keyCode":"Space"},{"keyPress":"1493475697406","keyRelease":"1493475697501","keyCode":"A"},{"keyPress":"1493475697518","keyRelease":"1493475697596","keyCode":"N"},{"keyPress":"1493475697580","keyRelease":"1493475697705","keyCode":"D"},{"keyPress":"1493475697669","keyRelease":"1493475697778","keyCode":"Space"},{"keyPress":"1493475697779","keyRelease":"1493475697863","keyCode":"B"},{"keyPress":"1493475697863","keyRelease":"1493475697934","keyCode":"L"},{"keyPress":"1493475698045","keyRelease":"1493475698155","keyCode":"O"},{"keyPress":"1493475698123","keyRelease":"1493475698248","keyCode":"N"},{"keyPress":"1493475698248","keyRelease":"1493475698356","keyCode":"D"},{"keyPress":"1493475698293","keyRelease":"1493475698459","keyCode":"E"},{"keyPress":"1493475698772","keyRelease":"1493475698810","keyCode":"Comma"},{"keyPress":"1493475699083","keyRelease":"1493475699153","keyCode":"Backspace"},{"keyPress":"1493475699185","keyRelease":"1493475699325","keyCode":"Space"},{"keyPress":"1493475699325","keyRelease":"1493475699394","keyCode":"N"},{"keyPress":"1493475699369","keyRelease":"1493475699479","keyCode":"A"},{"keyPress":"1493475699890","keyRelease":"1493475699937","keyCode":"Backspace"},{"keyPress":"1493475700016","keyRelease":"1493475700079","keyCode":"Backspace"},{"keyPress":"1493475700098","keyRelease":"1493475700210","keyCode":"A"},{"keyPress":"1493475700210","keyRelease":"1493475700327","keyCode":"N"},{"keyPress":"1493475700327","keyRelease":"1493475700452","keyCode":"D"},{"keyPress":"1493475700408","keyRelease":"1493475700525","keyCode":"Space"},{"keyPress":"1493475700501","keyRelease":"1493475700602","keyCode":"H"},{"keyPress":"1493475700749","keyRelease":"1493475700900","keyCode":"A"},{"keyPress":"1493475700900","keyRelease":"1493475700970","keyCode":"D"},{"keyPress":"1493475700934","keyRelease":"1493475701076","keyCode":"Space"},{"keyPress":"1493475701153","keyRelease":"1493475701256","keyCode":"N"},{"keyPress":"1493475701286","keyRelease":"1493475701396","keyCode":"E"},{"keyPress":"1493475701498","keyRelease":"1493475701608","keyCode":"A"},{"keyPress":"1493475701587","keyRelease":"1493475701704","keyCode":"R"},{"keyPress":"1493475701674","keyRelease":"1493475701752","keyCode":"L"},{"keyPress":"1493475701912","keyRelease":"1493475702039","keyCode":"Space"},{"keyPress":"1493475702198","keyRelease":"1493475702253","keyCode":"Backspace"},{"keyPress":"1493475702393","keyRelease":"1493475702487","keyCode":"Y"},{"keyPress":"1493475702466","keyRelease":"1493475702568","keyCode":"Space"},{"keyPress":"1493475702568","keyRelease":"1493475702691","keyCode":"T"},{"keyPress":"1493475702643","keyRelease":"1493475702737","keyCode":"W"}]
 
-user_id_list = r.table("users").run()
-user_list = []
+key = Keyboard(a)
 
-for user_id in user_id_list:
-	user_id = user_id["id"]
-
-	user = {}
-
-	user["user_keypresses"] = []
-
-	for key_group in r.table("keypresses").filter(r.row["user_id"]==user_id).get_field("keypressGroup_id").distinct().run():
-		key_group_chunk = [k for k in r.table("keypresses").filter(r.row["keypressGroup_id"] == key_group).run()]
-		key_group_chunk.sort(key=operator.itemgetter("keyPress"))
-		if len(key_group_chunk) > 2:
-			user["user_keypresses"].append(key_group_chunk)
-		
-	user_list.append(user)
-
-user_list.pop(1)
-
-for user in user_list:
-	print "--------USER----------------------------------------------------------"
-	overall_keyboard_params = []
-
-	for key_group in user["user_keypresses"]:
-		keyboard_test_instance = Keyboard(data=key_group)
-		keyboard_params = keyboard_test_instance.get_keyboard_params()
-		overall_keyboard_params.append(keyboard_params)
-
-
-	print overall_keyboard_params
+print key.get_keyboard_params()

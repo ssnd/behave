@@ -17,8 +17,7 @@ public class MouseListener implements NativeMouseInputListener {
     }
 
     public void nativeMouseMoved(NativeMouseEvent e) {
-        Main.triggerMouseMove (Integer.valueOf(e.getX()).toString(), Integer.valueOf(e.getY()).toString(), Long.valueOf(System.currentTimeMillis()).toString());
-
+        // action on movement
     }
 
     public void nativeMouseDragged(NativeMouseEvent e) {
