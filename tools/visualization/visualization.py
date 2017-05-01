@@ -11,9 +11,9 @@
 # snippet to import the library without relative routes
 import sys, os
 
-sys.path.insert(0, os.path.abspath("../../../"))
+sys.path.insert(0, os.path.abspath("../../"))
 
-from behave.lib import Behave
+from lib import Behave
 import matplotlib.pyplot as plt
 from matplotlib import collections as mc
 import matplotlib.font_manager as font_manager

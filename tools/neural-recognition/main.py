@@ -1,54 +1,72 @@
 import sys
 
-sys.path.append('../')
-
-from server import models
-
 sys.path.append('../../')
 from lib import Behave, Keyboard, Mouse
+
+import rethinkdb as r
+
+import operator
 
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.datasets.supervised import SupervisedDataSet
 from pybrain.tools.shortcuts import buildNetwork
 
+r.connect("localhost", 28015).repl()
+
+user_id_list = r.table("users").run()
+user_list = []
+
+for user_id in user_id_list:
+	user_id = user_id["id"]
+
+	user = {}
+
+	user["user_keypresses"] = []
+
+	for key_group in r.table("keypresses").filter(r.row["user_id"]==user_id).get_field("keypressGroup_id").distinct().run():
+		key_group_chunk = [k for k in r.table("keypresses").filter(r.row["keypressGroup_id"] == key_group).run()]
+		key_group_chunk.sort(key=operator.itemgetter("keyPress"))
+		if len(key_group_chunk) > 2:
+			user["user_keypresses"].append(key_group_chunk)
+		
+	user_list.append(user)
+
 
 #hiddenLayers = int(sys.argv[1])
 hiddenLayers = 27
-startRange = 4
-checkingRange = 20
 
 _lrate = 0.0055
 _lrdecay = 1.0
 _momentum = 0
 _weightdecay = 0
 
-testingGroup = [2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-
-#users = models.Collect.query.all()[startRange:startRange+checkingRange]
-
-users = [models.Collect.query.all()[i] for i in testingGroup]
-
-user_count = len(users)
 
 training_data = []
 
 params_count = 0
 
-for user_index in range(len(users)):
+user_count = len(user_list)
 
-	user = users[user_index]
 
-	keyboard_data_chunks = [ user.dataChunk1, user.dataChunk2, user.dataChunk3]
+for user_index in range(len(user_list)):
 
-	mouse_data_chunks = [ user.mouseDataChunk1, user.mouseDataChunk2, user.mouseDataChunk3]
+	user = user_list[user_index]
+
+	keyboard_data_chunks = []
+
+	#mouse_data_chunks = []
+
+	for key_group in user["user_keypresses"]:
+		keyboard_data_chunks.append(key_group)
+
 
 	for i in range(len(keyboard_data_chunks)):
 
 		keyboard_instance = Keyboard(data=keyboard_data_chunks[i])
 
-		mouse_instance = Mouse(data=mouse_data_chunks[i])
+		#mouse_instance = Mouse(data=mouse_data_chunks[i])
 
-		params = dict(keyboard_instance.get_keyboard_params().items() + mouse_instance.get_mouse_params().items())
+		params = dict(keyboard_instance.get_keyboard_params().items()) # + mouse_instance.get_mouse_params().items())
 
 		params_count = len(params)
 
@@ -90,47 +108,15 @@ trainer.trainOnDataset(ds, 1000)
 
 trainer.testOnData()
 
+keyboard_test_data = user_list[0]["user_keypresses"][0]
 
+keyboard_test_instance = Keyboard(data=keyboard_test_data)
+#mouse_test_instance = Mouse(data=mouse_test_data)
 
-# Network Activation
+test_data_to_normalize = dict(keyboard_test_instance.get_keyboard_params().items()) # + mouse_test_instance.get_mouse_params().items())
 
-for checkingID in range(len(users)):
+# print "User: ", checkingID, ": ", test_data_to_normalize
 
-	user = users[checkingID]
-
-
-	keyboard_test_data = user.dataChunk4
-	mouse_test_data = user.mouseDataChunk4
-
-	keyboard_test_instance = Keyboard(data=keyboard_test_data)
-	mouse_test_instance = Mouse(data=mouse_test_data)
-
-	test_data_to_normalize = dict(keyboard_test_instance.get_keyboard_params().items() + mouse_test_instance.get_mouse_params().items())
-
-	# print "User: ", checkingID, ": ", test_data_to_normalize
-
-	nd = keyboard_test_instance.normalize_data(test_data_to_normalize, _mean, _stddev)
-
-	
-	#print "Response: "
-	response = net.activate(nd)
-
-	#print response
-
-	maxResponse = -1
-
-	result = None
-
-	for i in range(len(response)):
-		if response[i] > maxResponse:
-			maxResponse = response[i]
-			result = i
-
-	print "User: ", checkingID
-
-	if maxResponse > 0.5: print "Guessed user: ", result
-	else: print "Guessed user: NONE (", result, maxResponse, ")"
-
-	print "------------------------"
-	
-print "LEARNING RATE", _lrate
+nd = keyboard_test_instance.normalize_data(test_data_to_normalize, _mean, _stddev)
+response = net.activate(nd)
+print response
