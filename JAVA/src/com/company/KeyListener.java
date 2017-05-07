@@ -19,6 +19,8 @@ public class KeyListener  implements NativeKeyListener{
             //}
         } catch (UnirestException e1) {
             e1.printStackTrace();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
         }
     }
 

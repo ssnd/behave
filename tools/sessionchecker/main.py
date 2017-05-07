@@ -12,7 +12,7 @@ app = Flask(__name__)
 sys.path.insert(0, os.path.abspath("../../"))
 from lib import Behave, Keyboard, Mouse
 
-@app.route("/keyboard", methods=["GET", "POST"])
+@app.route("/session", methods=["GET", "POST"])
 def keyboard():
 	if not "storage" in session:
 		session["storage"] = []
