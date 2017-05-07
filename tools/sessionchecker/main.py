@@ -77,6 +77,14 @@ def keyboard():
 
 	return jsonify({"status": "SUCCESS"})
 
+
+@app.route("/mousetest", methods=['GET','POST'])
+def mouse_test():
+	print "some"
+	return "1"
+
+
+
 app.secret_key = os.urandom(32)
 
 if __name__ == "__main__":

@@ -29,7 +29,7 @@ public class Main {
     static ArrayList mouseData = new ArrayList();
     static ArrayList mouseMoveData = new ArrayList();
 
-    static String url = "http://127.0.0.1:5000/session";
+    static String url = "http://127.0.0.1:5000/mousetest";
 
     public static final int SECOND = 1000;
     public static final String KEYBOARD_TYPE="keyboard";
@@ -94,6 +94,8 @@ public class Main {
 
                     public void cancelled() {
 
+
+
                     }
 
                 });
@@ -106,7 +108,7 @@ public class Main {
         timer = new Timer();
         timer.schedule(new TimerTask() {
             public void run() {
-                submitData(keyboardData, KEYBOARD_TYPE);
+//                submitData(keyboardData, KEYBOARD_TYPE);
             }
         }, 2*SECOND);
 
@@ -151,7 +153,6 @@ public class Main {
         mouseMoveEventData.put("x", Integer.valueOf(x).toString() );
         mouseMoveEventData.put("y", Integer.valueOf(y).toString() );
         mouseMoveEventData.put("timestamp", timestamp);
-
         mouseMoveData.add(mouseMoveEventData);
 
         if (mouseMoveData.size() >= 120) {

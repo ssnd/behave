@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="JAVA">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/gson-2.2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/JNativeHook.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
