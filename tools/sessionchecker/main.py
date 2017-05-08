@@ -80,7 +80,7 @@ def keyboard():
 
 @app.route("/mousetest", methods=['GET','POST'])
 def mouse_test():
-	print "some"
+	print request.data;
 	return "1"
 
 
