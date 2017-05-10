@@ -37,11 +37,12 @@ class Behave_Visualization:
 
 	def  __init__(self):
 		self.UPLOAD_FOLDER = "saved"
-		self.values_color = "#7548fb"
-		self.deviation_color = "#fb7548"
-		path_bold = "fonts/gilroy_black.ttf"
-		path_regular = "fonts/gilroy_regular.ttf"
-		path_semi = "fonts/gilroy_semi.ttf"
+		self.values_color = "#165EA9"
+		# self.edgecolor = "#010101"
+		self.deviation_color = "#1B8ECE"
+		path_bold = "fonts/segoe_bold.ttf"
+		path_regular = "fonts/segoe_regular.ttf"
+		path_semi = "fonts/segoe_light.ttf"
 
 		self.bold = font_manager.FontProperties(fname=path_bold)
 		self.semi = font_manager.FontProperties(fname=path_semi)
@@ -172,8 +173,8 @@ class Behave_Visualization:
 			len(durations)+10 ,
 			up_deviation-down_deviation, 
 			linewidth=1,
-			edgecolor='r',
-			facecolor='r',
+			edgecolor=self.deviation_color,
+			facecolor=self.deviation_color,
 			fill=True,
 			alpha=0.4,
 			label="Deviation range"
@@ -239,7 +240,7 @@ class Behave_Visualization:
 
 		down_deviation = average-deviation
 
-		fig, ax = plt.subplots(1, figsize=[7,3])
+		fig, ax = plt.subplots(1)
 
 		fig.subplots_adjust(bottom=0.15)
 
@@ -248,7 +249,7 @@ class Behave_Visualization:
 			len(release_to_release)+10 ,
 			up_deviation-down_deviation, 
 			linewidth=1,
-			edgecolor="r",
+			edgecolor=None,
 			facecolor=self.deviation_color,
 			fill=True,
 			alpha=0.5,
@@ -302,7 +303,7 @@ class Behave_Visualization:
 
 		down_deviation = average-deviation
 
-		fig, ax = plt.subplots(1, figsize=[7,3])
+		fig, ax = plt.subplots(1)
 
 		fig.subplots_adjust(bottom=0.15)
 
@@ -311,7 +312,7 @@ class Behave_Visualization:
 			len(press_to_press)+10 ,
 			up_deviation-down_deviation, 
 			linewidth=1,
-			edgecolor="r",
+			edgecolor=self.deviation_color,
 			facecolor=self.deviation_color,
 			fill=True,
 			alpha=0.5,
@@ -358,7 +359,7 @@ class Behave_Visualization:
 
 		deviation = instance.standart_deviation(flight_time)
 
-		fig, ax = plt.subplots(1, figsize=[7,3])
+		fig, ax = plt.subplots(1)
 
 		fig.subplots_adjust(bottom=0.15)
 
@@ -376,7 +377,7 @@ class Behave_Visualization:
 			len(flight_time)+10 ,
 			up_deviation-down_deviation, 
 			linewidth=1,
-			edgecolor="r",
+			edgecolor=self.deviation_color,
 			facecolor=self.deviation_color,
 			fill=True,
 			alpha=0.5,
@@ -430,7 +431,7 @@ class Behave_Visualization:
 
 		down_deviation = average-deviation
 
-		fig, ax = plt.subplots(1, figsize=[7,3])
+		fig, ax = plt.subplots(1)
 
 		fig.subplots_adjust(bottom=0.15)
 
@@ -441,7 +442,7 @@ class Behave_Visualization:
 			len(dwell_time)+10 ,
 			up_deviation-down_deviation, 
 			linewidth=1,
-			edgecolor="r",
+			edgecolor=self.deviation_color,
 			facecolor=self.deviation_color,
 			fill=True,
 			alpha=0.5,
@@ -496,7 +497,7 @@ class Behave_Visualization:
 
 		down_deviation = average-deviation
 
-		fig, ax = plt.subplots(1, figsize=[7,3])
+		fig, ax = plt.subplots(1)
 
 		fig.subplots_adjust(bottom=0.15)
 
@@ -505,7 +506,7 @@ class Behave_Visualization:
 			len(move_speed)+10 ,
 			up_deviation-down_deviation, 
 			linewidth=1,
-			edgecolor="r",
+			edgecolor=self.deviation_color,
 			facecolor=self.deviation_color,
 			fill=True,
 			alpha=0.5,
@@ -544,11 +545,11 @@ class Behave_Visualization:
 
 
 if __name__ == "__main__":
-	Behave_Visualization().dwell(1)
-	Behave_Visualization().press_to_press(1)
-	Behave_Visualization().release_to_release(1)
-	Behave_Visualization().flight(1)
-	Behave_Visualization().mouse_speed(1)
+	Behave_Visualization().dwell_flight_params()
+	# Behave_Visualization().press_to_press(2)
+	# Behave_Visualization().release_to_release(1)
+	# Behave_Visualization().flight(2)
+	# Behave_Visualization().mouse_speed(2)
 
 
 # print instance.keypress_delay_average()
