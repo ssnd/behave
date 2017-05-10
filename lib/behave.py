@@ -45,8 +45,16 @@ class Behave():
 		
 		Returns:
 			Array: Calculated average
+			None: if the input array is empty
 		"""
+
+
+		# todo: check if ok
+		if (len(arr)==0):
+			return None
+
 		return sum(arr) / len(arr)
+
 
 	@staticmethod
 	def standart_deviation(arr):
@@ -56,9 +64,15 @@ class Behave():
 			arr (Array): Input array
 		
 		Returns:
-			Number: Calculated deviation
+			Number: Calculated deviation 
+			None: if the input array is empty or has only one element
 		"""
+
+
 		length = len(arr)
+
+		if (length < 2) :
+			return None
 
 		average = sum(arr) / length
 

@@ -11,9 +11,12 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import com.google.gson.Gson;
+import org.json.JSONObject;
 
+import javax.swing.*;
 import java.util.*;
 
+import java.util.Timer;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,18 +32,20 @@ public class Main {
     static ArrayList mouseData = new ArrayList();
     static ArrayList mouseMoveData = new ArrayList();
 
-    static String url = "http://127.0.0.1:5000/mousetest";
+    static String event;
+    static String url = "http://127.0.0.1:5000/session";
 
     public static final int SECOND = 1000;
     public static final String KEYBOARD_TYPE="keyboard";
     public static final String MOUSE_EVENTS_TYPE="mouse_events";
-    public static final String MOUSE_MOVE_TYPE="mouse_move";
 
 
     public static Timer timer;
+    public static Timer mouseTimer;
 
     public static void main(String[] args) throws InterruptedException {
         timer = new Timer();
+        mouseTimer = new Timer();
 
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
@@ -88,7 +93,18 @@ public class Main {
 
                     public void completed(HttpResponse<JsonNode> response) {
 
-                        System.out.println("data successfully submitted to the server");
+                        JsonNode body = response.getBody();
+
+                        System.out.println(body);
+
+                        JSONObject myObj = response.getBody().getObject();
+
+                        String responseStr = myObj.getString("status");
+
+                        if(responseStr.equals("INTERRUPT")){
+                            System.out.println("--INTERRUPTION");
+                            JOptionPane.showMessageDialog(null, "Another person is using this pc.");
+                        }
 
                     }
 
@@ -108,11 +124,29 @@ public class Main {
         timer = new Timer();
         timer.schedule(new TimerTask() {
             public void run() {
-//                submitData(keyboardData, KEYBOARD_TYPE);
+                submitData(keyboardData, KEYBOARD_TYPE);
+                keyboardData.clear();
             }
         }, 2*SECOND);
 
     }
+
+    public static void rescheduleMouseTimer() {
+        mouseTimer.cancel();
+
+        mouseTimer = new Timer();
+
+
+        mouseTimer.schedule(new TimerTask() {
+            public void run() {
+                System.out.println("sent");
+                submitData(mouseData, MOUSE_EVENTS_TYPE);
+                mouseData.clear();
+            }
+        }, 500      );
+
+    }
+
 
 
 
@@ -150,15 +184,13 @@ public class Main {
     public static void triggerMouseMove(String x, String y, String timestamp) {
         LinkedHashMap<String, String> mouseMoveEventData = new LinkedHashMap<>();
 
-        mouseMoveEventData.put("x", Integer.valueOf(x).toString() );
-        mouseMoveEventData.put("y", Integer.valueOf(y).toString() );
+        mouseMoveEventData.put("mouseX", Integer.valueOf(x).toString() );
+        mouseMoveEventData.put("mouseY", Integer.valueOf(y).toString() );
         mouseMoveEventData.put("timestamp", timestamp);
-        mouseMoveData.add(mouseMoveEventData);
+        mouseMoveEventData.put("event", "mousemove");
+        mouseData.add(mouseMoveEventData);
+        rescheduleMouseTimer();
 
-        if (mouseMoveData.size() >= 120) {
-            submitData(mouseMoveData, MOUSE_MOVE_TYPE);
-            mouseMoveData.clear();
-        }
 
     }
 
@@ -166,20 +198,25 @@ public class Main {
         LinkedHashMap<String, String> mouseEventData = new LinkedHashMap<>();
         mouseEventData.put("mousePress", mouseReleaseQueue);
         mouseEventData.put("mouseRelease", timestamp);
-        mouseEventData.put("buttonCode", button);
-        mouseData.add(mouseEventData);
 
 
-        if (mouseData.size() >= 200) {
-
-            submitData(mouseData, MOUSE_EVENTS_TYPE);
-            mouseData.clear();
+        if (button.equals("1")) {
+            event = "leftClick";
 
         }
 
 
+        if (button.equals("3")) {
+            event = "rightClick";
+        }
 
 
+        mouseEventData.put("event", event);
+        mouseData.add(mouseEventData);
+
+
+
+        rescheduleMouseTimer();
 
 
     }

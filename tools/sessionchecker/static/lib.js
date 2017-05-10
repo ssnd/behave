@@ -22,20 +22,26 @@
 			// 	currentValue = el.value;
 			// });
 			
-
-
+					    
 			if (isValid) {
+				var pass_values = []
+				for(var i = 1; i < 6; i++){
+					var id = "pass" + i
+
+					pass_values.push(JSON.stringify({type: "keyboard", data: passwords[id]}))
+
+				}
 				$.ajax({
-					url: "/session",
+					url: "/jslib",
 					type: "POST",
-					data: JSON.stringify(passwords),
+					data: JSON.stringify(pass_values),
 					contentType: "application/json; charset=utf-8",
 					dataType: "json",
-					success: function() {
-						console.log("success");
+					success: function () {
+						
 					}
 				})
-
+				console.log(JSON.stringify(pass_values))
 			}
 
 		});
@@ -78,7 +84,7 @@
 				var obj = {
 					keyPress : keypressQueue[event.keyCode],
 					keyRelease : timestamp,
-					keyCode : event.keyCode,
+					keyCode : String.fromCharCode(event.keyCode),
 
 				}
 

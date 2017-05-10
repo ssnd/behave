@@ -42,7 +42,7 @@ class Keyboard(Behave):
 		self.key_code_arr = []
 
 		for keystroke in self.data:
-			if keystroke["keyPress"] != None and keystroke["keyRelease"] != None and keystroke["keyCode"] != None:
+			if "keyPress" in keystroke and keystroke["keyPress"] != None and keystroke["keyRelease"] != None and keystroke["keyCode"] != None:
 				self.key_press_arr.append(int(keystroke["keyPress"]))
 				self.key_release_arr.append(int(keystroke["keyRelease"]))
 				self.key_code_arr.append(str(keystroke["keyCode"]))
@@ -58,7 +58,7 @@ class Keyboard(Behave):
 		self.key_code_arr = []
 
 		for keystroke in self.data:
-			if keystroke["keyPress"] != None and keystroke["keyRelease"] != None and keystroke["keyCode"] != None:
+			if "keyPress" in keystroke and keystroke["keyPress"] != None and keystroke["keyRelease"] != None and keystroke["keyCode"] != None:
 				self.key_press_arr.append(int(keystroke["keyPress"]))
 				self.key_release_arr.append(int(keystroke["keyRelease"]))
 				self.key_code_arr.append(str(keystroke["keyCode"]))
@@ -78,13 +78,13 @@ class Keyboard(Behave):
 
 	def letter_filter(self):
 
-		unfiltered_arr = self._data
+		unfiltered_arr = ast.literal_eval(self._data)
 
 		self.reinit([k for k in unfiltered_arr if len(k["keyCode"])==1])
 
 	def keyname_filter(self, keyname_str):
 
-		unfiltered_arr = self._data
+		unfiltered_arr = ast.literal_eval(self._data)
 
 		self.reinit([k for k in unfiltered_arr if k["keyCode"]==keyname_str])
 
@@ -161,9 +161,9 @@ class Keyboard(Behave):
 		val_arr['rtor_time_average'] = self.average(self.release_to_release())
 		val_arr['ptop_time_average'] = self.average(self.press_to_press())
 
-		self.keyname_filter("Space")
+		#self.keyname_filter("Space")
 
-		val_arr['space_dwell_time_average'] = self.average(self.dwell_time())
+		#val_arr['space_dwell_time_average'] = self.average(self.dwell_time())
 
 		#val_arr['dwell_time_std'] = self.standart_deviation(self.dwell_time())
 		#val_arr['flight_time_std'] = self.standart_deviation(self.flight_time())
