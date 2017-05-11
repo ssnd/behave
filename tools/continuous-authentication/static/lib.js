@@ -7,7 +7,7 @@
 	$.fn.behave = function() {
 
 		var $forms = $("form[data-behave-register], form[data-behave-login]");
-		var $registerFormInputs = $("form[data-behave-register], form[data-behave-login] input[type='password']");
+		var $registerFormInputs = $("form[data-behave-register] input[type='password'], form[data-behave-login] input[type='password']");
 		var keypressQueue = {};
 		var passwords = {};
 		var isValid = true;

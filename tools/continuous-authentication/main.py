@@ -5,12 +5,14 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
 from sklearn.covariance import EllipticEnvelope
 from sklearn import svm
+import numpy
 
 from flask import Flask, request, g, jsonify, session, render_template
 app = Flask(__name__)
 
 sys.path.insert(0, os.path.abspath("../../"))
 from lib import Behave, Keyboard, Mouse
+
 
 @app.route("/session", methods=["GET", "POST"])
 def continuous():
@@ -19,9 +21,7 @@ def continuous():
 
 	keyboard_chunks_value = 3
 
-	mouse_clicks_chunks_value = 3
-
-	mouse_moves_chunks_value = 3
+	mouse_chunks_value = 20
 
 	if data_chunk["type"] == "keyboard" and len([k for k in ast.literal_eval(data_chunk["data"]) if len(k["keyCode"]) == 1]) > 5:
 		if not "keyboard" in session:
@@ -53,31 +53,55 @@ def continuous():
 
 				params_arr.append(params)
 
-			scaler = StandardScaler().fit(params_arr)
+			#scaler = StandardScaler().fit(params_arr)
 
 			# clf = svm.OneClassSVM(nu=.4, kernel="rbf", gamma=0.5, verbose=True)
 			# clf = EllipticEnvelope()
-			clf = IsolationForest(contamination=0.1, bootstrap=True, max_features=4)
+			#clf = IsolationForest(contamination=0.05, bootstrap=True, max_features=4)
 
-			print params_arr
+			numpy_params_arr = numpy.array(params_arr)
 
-			X = scaler.transform(params_arr)
+			numpy_params_arr_mean = numpy.mean(numpy_params_arr, axis=0)
 
-			clf.fit(X)
+			numpy_key_group_params = numpy.array(key_group_params)
 
-			print key_group_params, " ", type(key_group_params)
+			dist = numpy.linalg.norm(numpy_params_arr_mean - numpy_key_group_params)
 
-			X_check = scaler.transform([key_group_params])
+			accuracy_ratio = 1
 
-			prediction = clf.predict(X_check)
+			first_check = (numpy.linalg.norm(numpy.amin(numpy_params_arr, axis=0) - numpy.amax(numpy_params_arr, axis=0)))
 
-			print prediction
+			second_check = numpy.mean([numpy.linalg.norm(numpy_params_arr[k] - numpy_params_arr[k+1]) for k in range(len(numpy_params_arr) - 1)])
 
-			if(prediction[0]==-1):
+			accuracy_value = (first_check*2+second_check)/3 * accuracy_ratio
+
+			#print numpy.amin(numpy_params_arr, axis=0), numpy.amax(numpy_params_arr, axis=0)
+
+			print "ACCURACY VALUE: ", accuracy_value
+
+			print "DISTANCE: ", dist
+
+			# print params_arr.values()
+
+			#X = scaler.transform(params_arr)
+
+			#clf.fit(X)
+
+			#print key_group_params, " ", type(key_group_params)
+
+			#X_check = scaler.transform([key_group_params])
+
+			#prediction = clf.predict(X_check)
+
+			#print prediction 
+
+			if dist > accuracy_value:
+				print "DISTANCE FALSE"
 				return jsonify({"status": "INTERRUPT"})
-
-		keyboard_storage.append(key_group)
-		print "STORAGE: ", keyboard_storage
+			else:
+				keyboard_storage.append(key_group)
+		else:
+			keyboard_storage.append(key_group)
 		
 		session["keyboard"] = keyboard_storage
 
@@ -96,7 +120,7 @@ def continuous():
 
 
 
-		if len([len(mouse_events_storage[k]) for k in mouse_events_storage]) > 0 and min([len(mouse_events_storage[k]) for k in mouse_events_storage if mouse_instance_params[k] != None]) > mouse_moves_chunks_value:
+		if len([len(mouse_events_storage[k]) for k in mouse_events_storage if mouse_instance_params[k] != None]) > 0 and min([len(mouse_events_storage[k]) for k in mouse_events_storage if mouse_instance_params[k] != None]) > mouse_chunks_value:
 			
 			params_arr = []
 
@@ -198,7 +222,7 @@ def jslib():
 
 				# clf = svm.OneClassSVM(nu=.4, kernel="rbf", gamma=0.5, verbose=True)
 				# clf = EllipticEnvelope()
-				clf = IsolationForest(contamination=0.3, bootstrap=True, max_features=4)
+				clf = IsolationForest(contamination=0.2, bootstrap=True, max_features=4)
 
 				print params_arr
 
