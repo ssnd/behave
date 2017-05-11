@@ -28,39 +28,32 @@
 <body>
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4">
-			<h1>Login form</h1>
+			<h1>Try to hack me!</h1>
+			<h2>The password is: <code>behave</code></h2>
 			<br>
 			<form data-behave-login>
 			
-				<div class="form-group">
+				<div class="form-group" style="display:none;">
 					<label for="email">Email</label>
-					<input id="email" class="form-control" type="email" name="username">
+					<input id="email" class="form-control" type="email" name="username" value="sh@lyceum.ort.md">
 				</div>
 
 				<div class="form-group">
-					<label for="password1" >Password 1</label>
+					<label for="password1" >Enter the password here!</label>
 					<input id="password1" class="form-control" type="password" name="password1">
 				</div>
 
+				<button class="btn btn-default" type="submit">Login</button>
+				
+				<div class="alerts">
+					<div class="alert alert-success hidden">well done!</div>
+					<div class="alert alert-danger hidden">wrong password pattern!</div>
 
-				<div class="form-group">
-					<label for="password2" >Password 2</label>
-					<input class="form-control" type="password" id="password2" name="password2">
 				</div>
 
-
-				<div class="form-group">
-					<label for="password3" >Password 3</label>
-					<input class="form-control" type="password" id="password3" name="password3">
-				</div>
-
-				<div class="form-group">
-					<label for="password4" >Password 4</label>
-					<input class="form-control" type="password" id="password4" name="password4">
-				</div>
-
-				<button class="btn btn-default" type="submit">Register</button>
 			</form>
+
+
 
 		</div>
 	</div>

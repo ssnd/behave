@@ -7,7 +7,7 @@
 	$.fn.behave = function() {
 
 		var $forms = $("form[data-behave-register], form[data-behave-login]");
-		var $registerFormInputs = $("form[data-behave-register] input[type='password']");
+		var $registerFormInputs = $("form[data-behave-register], form[data-behave-login] input[type='password']");
 		var keypressQueue = {};
 		var passwords = {};
 		var isValid = true;
@@ -16,32 +16,32 @@
 		$forms.submit(function(e) {
 			e.preventDefault();
 
-			// $registerFormInputs.each(function(index, el) {
-			// 	if (index > 0 && el.value != currentValue) 
-			// 		isValid = false;
-			// 	currentValue = el.value;
-			// });
-			
 					    
 			if (isValid) {
 				var pass_values = []
-				for(var i = 1; i < 6; i++){
-					var id = "pass" + i
 
-					pass_values.push(JSON.stringify({type: "keyboard", data: passwords[id]}))
-
+				for (var i = 0; i<Object.keys(passwords).length; i++) {
+					var key_id = "pass" + (i+1);
+					pass_values.push(JSON.stringify({type: "keyboard", data: passwords[key_id]}))
 				}
+			
 				$.ajax({
 					url: "/jslib",
 					type: "POST",
 					data: JSON.stringify(pass_values),
 					contentType: "application/json; charset=utf-8",
 					dataType: "json",
-					success: function () {
-						
+					success: function (data) {
+						if (data['status'].toLowerCase() == "success") {
+							$(".alert-success").removeClass("hidden");
+							$(".alert-danger").addClass("hidden");
+						} else {
+							$(".alert-success").addClass("hidden");
+							$(".alert-danger").removeClass("hidden");
+						}
 					}
 				})
-				console.log(JSON.stringify(pass_values))
+				// console.log(JSON.stringify(pass_values))
 			}
 
 		});

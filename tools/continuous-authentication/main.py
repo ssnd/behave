@@ -214,7 +214,7 @@ def jslib():
 
 				print prediction
 
-				if(prediction[0]==-1):
+				if(prediction==-1):
 					return jsonify({"status": "INTERRUPT"})
 
 			keyboard_storage.append(key_group)
@@ -228,6 +228,13 @@ def jslib():
 def register():
 	if request.method=="GET":
 		return render_template("register.html")
+
+
+@app.route("/login")
+def login():
+	if request.method=="GET":
+		return render_template("login.html")
+
 
 app.secret_key = os.urandom(32)
 
