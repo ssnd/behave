@@ -121,9 +121,9 @@ class Mouse(Behave):
 
 		val_arr['double_click_duration_avg'] = self.average(self.dbclick_durations)
 
-		val_arr['point_and_click_duration_avg'] = self.average(self.point_and_click_durations)
+		#val_arr['point_and_click_duration_avg'] = self.average(self.point_and_click_durations)
 
-		val_arr['move_distance_avg'] = self.average(self.move_distances)
+		#val_arr['move_distance_avg'] = self.average(self.move_distances)
 
 		val_arr['left_click_duration_deviation'] = self.standart_deviation(self.left_click_durations)
 
@@ -133,7 +133,7 @@ class Mouse(Behave):
 
 		val_arr['point_and_click_duration_deviation'] = self.standart_deviation(self.point_and_click_durations)
 
-		val_arr['move_distance_deviation'] = self.standart_deviation(self.move_distances)
+		#val_arr['move_distance_deviation'] = self.standart_deviation(self.move_distances)
 
 
 		return val_arr

@@ -149,9 +149,9 @@ class Keyboard(Behave):
 		letter_instance = Keyboard(data=self.letter_filter(self.data))
 
 		val_arr['dwell_time_average'] = self.average(letter_instance.dwell_time())
-		val_arr['flight_time_average'] = self.average(letter_instance.flight_time())
-		val_arr['rtor_time_average'] = self.average(letter_instance.release_to_release())
-		val_arr['ptop_time_average'] = self.average(letter_instance.press_to_press())
+		val_arr['flight_time_average'] = self.average([k for k in letter_instance.flight_time() if k < 700])
+		val_arr['rtor_time_average'] = self.average([k for k in letter_instance.release_to_release() if k < 700])
+		val_arr['ptop_time_average'] = self.average([k for k in letter_instance.press_to_press() if k < 700])
 
 		#self.key
 

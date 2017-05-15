@@ -21,9 +21,13 @@ def continuous():
 
 	keyboard_chunks_value = 3
 
-	mouse_chunks_value = 20
+	mouse_chunks_value = 10
 
 	if data_chunk["type"] == "keyboard" and len([k for k in ast.literal_eval(data_chunk["data"]) if len(k["keyCode"]) == 1]) > 5:
+
+		print "/// KEYBOARD EVENT"
+
+
 		if not "keyboard" in session:
 			session["keyboard"] = []
 
@@ -34,6 +38,8 @@ def continuous():
 		#print request.data, " ---"
 
 		key_instance = Keyboard(data=key_group)
+
+		# print key_instance.flight_time()
 
 		key_group_params = key_instance.get_keyboard_params().values()
 
@@ -67,13 +73,13 @@ def continuous():
 
 			dist = numpy.linalg.norm(numpy_params_arr_mean - numpy_key_group_params)
 
-			accuracy_ratio = 1
+			accuracy_ratio = 0.6
 
 			first_check = (numpy.linalg.norm(numpy.amin(numpy_params_arr, axis=0) - numpy.amax(numpy_params_arr, axis=0)))
 
 			second_check = numpy.mean([numpy.linalg.norm(numpy_params_arr[k] - numpy_params_arr[k+1]) for k in range(len(numpy_params_arr) - 1)])
 
-			accuracy_value = (first_check*2+second_check)/3 * accuracy_ratio
+			accuracy_value = (first_check*1+second_check*3)/4 * accuracy_ratio
 
 			#print numpy.amin(numpy_params_arr, axis=0), numpy.amax(numpy_params_arr, axis=0)
 
@@ -107,6 +113,8 @@ def continuous():
 
 
 	if data_chunk["type"] == "mouse_events":
+
+		print "/// MOUSE EVENT"
 		mouse_event_group = data_chunk["data"]
 
 		mouse_instance = Mouse(data=mouse_event_group)
@@ -137,28 +145,53 @@ def continuous():
 			print mouse_instance_params_values, "----------PARAMS VALUES"
 
 			print params_arr
+
+			numpy_params_arr = numpy.array(params_arr)
+
+			numpy_params_arr_mean = numpy.mean(numpy_params_arr, axis=0)
+
+			numpy_key_group_params = numpy.array(mouse_instance_params_values)
+
+			dist = numpy.linalg.norm(numpy_params_arr_mean - numpy_key_group_params)
+
+			accuracy_ratio = 0.8
+
+			first_check = (numpy.linalg.norm(numpy.amin(numpy_params_arr, axis=0) - numpy.amax(numpy_params_arr, axis=0)))
+
+			second_check = numpy.mean([numpy.linalg.norm(numpy_params_arr[k] - numpy_params_arr[k+1]) for k in range(len(numpy_params_arr) - 1)])
+
+			accuracy_value = (first_check*1+second_check*3)/4 * accuracy_ratio
+
+			#print numpy.amin(numpy_params_arr, axis=0), numpy.amax(numpy_params_arr, axis=0)
+
+			print "ACCURACY VALUE: ", accuracy_value
+
+			print "DISTANCE: ", dist
 			
-			scaler = StandardScaler().fit(params_arr)
+			# scaler = StandardScaler().fit(params_arr)
 
 			# clf = svm.OneClassSVM(nu=.4, kernel="rbf", gamma=0.5, verbose=True)
 			# clf = EllipticEnvelope()
-			clf = IsolationForest(contamination=0.05, bootstrap=True, max_features=len(mouse_instance_params_values))
+			# clf = IsolationForest(contamination=0.05, bootstrap=True, max_features=len(mouse_instance_params_values))
 
-			X = scaler.transform(params_arr)
+			# X = scaler.transform(params_arr)
 
-			clf.fit(X)
+			# clf.fit(X)
 
-			print mouse_instance_params_values, " ", type(mouse_instance_params_values)
+			# print mouse_instance_params_values, " ", type(mouse_instance_params_values)
 
-			X_check = scaler.transform([mouse_instance_params_values])
+			# X_check = scaler.transform([mouse_instance_params_values])
 
-			print X_check
+			# print X_check
 
-			prediction = clf.predict(X_check)
+			# prediction = clf.predict(X_check)
 
-			print prediction
+			# print prediction
 
-			if(prediction[0]==-1):
+			# if(prediction[0]==-1):
+			# 	return jsonify({"status": "INTERRUPT"})
+
+			if(dist > accuracy_value):
 				return jsonify({"status": "INTERRUPT"})
 
 			
